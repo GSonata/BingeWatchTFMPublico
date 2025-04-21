@@ -1,0 +1,139 @@
+.notifications-panel {
+    position: absolute;
+    top: 3.5rem;
+    left: 1rem;
+    background-color: var(--gray-black);
+    padding: 1rem;
+    border-radius: 1rem;
+    width: 400px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    z-index: 99;
+}
+
+.notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: var(--gray-darker);
+    margin-bottom: 1rem;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.05);
+    border-left: 4px solid transparent;
+}
+
+.notif-item.like {
+    border-left-color: #26d782;
+}
+
+.notif-item.comment {
+    border-left-color: #2196f3;
+}
+
+.notif-avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.notif-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.notif-alias {
+    font-weight: bold;
+    color: var(--blue-soft);
+}
+
+.notif-action {
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    color: #ccc;
+}
+
+.notif-title {
+    font-weight: 600;
+    margin: 0.2rem 0;
+    color: #fff;
+}
+
+.notif-comment {
+    font-style: italic;
+    color: #aaa;
+    font-size: 0.9rem;
+    max-height: 3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.notif-date {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.5rem;
+}
+
+.notif-delete-button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #bbb;
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-left: 0.5rem;
+    align-self: flex-start;
+    transition: transform 0.2s, color 0.2s;
+    z-index: 1;
+}
+
+.notif-delete-button:hover {
+    color: #ff5555;
+    transform: scale(1.1);
+}
+
+.notif-delete-button:focus,
+.notif-delete-button:active {
+    outline: none;
+    box-shadow: none;
+}
+
+.notif-item:hover {
+    background-color: var(--gray-almost-black)
+}
+
+/* Botón de notificaciones */
+.notification-bell {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: transparent;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 100;
+    color: var(--text-color);
+    transition: transform 0.2s ease;
+  }
+  
+  .notification-bell:hover {
+    transform: scale(1.15);
+  }
+  
+  /* Contador de notificaciones no leídas */
+  .notif-count {
+    position: absolute;
+    top: -0.3rem;
+    right: -0.4rem;
+    background-color: #ff5555;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.15rem 0.45rem;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  }
+  

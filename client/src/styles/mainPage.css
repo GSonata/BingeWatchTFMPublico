@@ -1,0 +1,32 @@
+@import './variables.css';
+
+.main-page {
+    text-align: center;
+    padding: 20px;
+}
+
+.main-page h2 {
+    color: var(--primary-blue);
+}
+
+.main-page p {
+    color: var(--text-color);
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 5px 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--primary-blue);
+}
+
+nav ul li a:hover {
+    color: var(--success-green);
+}

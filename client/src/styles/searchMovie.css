@@ -1,0 +1,17 @@
+@import './variables.css';
+
+.search-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.search-input {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid var(--darker-gray);
+    background-color: var(--darker-gray);
+    color: var(--text-color);
+    border-radius: 4px;
+}

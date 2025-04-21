@@ -1,0 +1,48 @@
+@import './variables.css';
+
+.login-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    padding: 8px;
+    margin: 5px 0;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid var(--darker-gray);
+    background-color: var(--darker-gray);
+    color: var(--text-color);
+    border-radius: 4px;
+}
+
+.login-container button {
+    background-color: var(--primary-blue);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+    background-color: var(--success-green);
+}
+
+.login-container label {
+    margin: 10px 0;
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.login-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin: 5px 0;
+}

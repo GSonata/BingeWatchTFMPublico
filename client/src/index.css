@@ -1,0 +1,20 @@
+@import './styles/variables.css';
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-light);
+  color: var(--text-color); 
+}
+
+h2 {
+  color: var(--gray-medium-light); 
+}
+
+p {
+  margin: 10px 0;
+}
