@@ -1,0 +1,83 @@
+:root {
+  --dark-gray: #474747;
+  --darker-gray: #333333;
+  --primary-blue: #3496c4;
+  --success-green: #2eaa62;
+  --text-color: #ffffff;
+  --error-color: #ff4d4d;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--dark-gray);
+  color: var(--text-color);
+}
+
+h2 {
+  color: var(--primary-blue);
+}
+
+p {
+  margin: 10px 0;
+}
+
+button {
+  background-color: var(--primary-blue);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--success-green);
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 8px;
+  margin: 5px 0;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid var(--darker-gray);
+  background-color: var(--darker-gray);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+label {
+  margin: 10px 0;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-color);
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.error-message {
+  color: var(--error-color);
+  margin: 5px 0;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin: 5px 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--primary-blue);
+}
+
+nav ul li a:hover {
+  color: var(--success-green);
+}
