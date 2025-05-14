@@ -6,18 +6,23 @@ import '../styles/AllBadgesModal.scss';
 const AllBadgesModal = ({ onClose }) => {
     const [allBadges, setAllBadges] = useState([]);
     const [userBadges, setUserBadges] = useState([]);
+    const baseUrl = process.env.REACT_APP_API_URL;
+
 
     useEffect(() => {
         const fetchBadges = async () => {
             try {
-                const resAll = await fetch('/badges/all');
-                const resUser = await fetch('/user/badges', { credentials: 'include' });
+                
+                const resAll = await fetch(`${baseUrl}/badges/all`);
+                const resUser = await fetch(`${baseUrl}/user/badges`, {
+                    credentials: 'include'
+                });
 
                 const all = await resAll.json();
                 const user = await resUser.json();
 
                 setAllBadges(all);
-                setUserBadges(user); 
+                setUserBadges(user);
 
             } catch (err) {
                 console.error('Error al cargar insignias:', err);
@@ -31,12 +36,12 @@ const AllBadgesModal = ({ onClose }) => {
     const getBadgeData = (id) => userBadges.find(b => b.id === id);
 
     const sortedBadges = [...allBadges]
-    .filter(badge => badge.id !== 'Insignia_Mes')
-    .sort((a, b) => {
-        const aUnlocked = isUnlocked(a.id);
-        const bUnlocked = isUnlocked(b.id);
-        return aUnlocked === bUnlocked ? 0 : aUnlocked ? -1 : 1;
-    });
+        .filter(badge => badge.id !== 'Insignia_Mes')
+        .sort((a, b) => {
+            const aUnlocked = isUnlocked(a.id);
+            const bUnlocked = isUnlocked(b.id);
+            return aUnlocked === bUnlocked ? 0 : aUnlocked ? -1 : 1;
+        });
 
     return (
         <div className="allbadges-modal-overlay">
