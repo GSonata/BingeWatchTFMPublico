@@ -12,24 +12,24 @@ function MainPageComponent() {
 
     const introductionData = [
         {
-          icon: 'images/iconos/peliculas.png',
-          title: '¿Qué es BingeWatch?',
-          text:
-            '¡Descubre el placer de coleccionar películas como nunca antes! BingeWatch es una plataforma diseñada para catalogar, organizar y disfrutar de una base de datos de todas tus películas.',
+            icon: 'images/iconos/peliculas.png',
+            title: '¿Qué es BingeWatch?',
+            text:
+                '¡Descubre el placer de coleccionar películas como nunca antes! BingeWatch es una plataforma diseñada para catalogar, organizar y disfrutar de una base de datos de todas tus películas.',
         },
         {
-          icon: 'images/iconos/database.png',
-          title: '¿Cómo funciona BingeWatch?',
-          text:
-            'Agrega títulos, organízalos por género, año o director, y guarda notas sobre cada uno. También podrás marcar tus películas favoritas y llevar un registro de futuras adquisiciones.',
+            icon: 'images/iconos/database.png',
+            title: '¿Cómo funciona BingeWatch?',
+            text:
+                'Agrega títulos, organízalos por género, año o director, y guarda notas sobre cada uno. También podrás marcar tus películas favoritas y llevar un registro de futuras adquisiciones.',
         },
         {
-          icon: 'images/iconos/notice.png',
-          title: '¿Por qué BingeWatch?',
-          text:
-            'Somos una plataforma desarrollada por y para cinéfilos, comprendemos la importancia del orden y la claridad. Valoramos la comunidad por encima de todo.',
+            icon: 'images/iconos/notice.png',
+            title: '¿Por qué BingeWatch?',
+            text:
+                'Somos una plataforma desarrollada por y para cinéfilos, comprendemos la importancia del orden y la claridad. Valoramos la comunidad por encima de todo.',
         },
-      ];
+    ];
 
     useEffect(() => {
         const checkIfMobile = () => {
@@ -44,20 +44,20 @@ function MainPageComponent() {
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries, observerInstance) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              observerInstance.unobserve(entry.target); 
-            }
-          });
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    observerInstance.unobserve(entry.target);
+                }
+            });
         }, { threshold: 0.3 });
-      
+
         document.querySelectorAll(".introCard").forEach((card) => observer.observe(card));
-      
+
         return () => observer.disconnect();
-      }, []);
-      
-      
+    }, []);
+
+
 
 
 
@@ -100,9 +100,9 @@ function MainPageComponent() {
                             </h2>
                             <h3>Un lugar, todas tus películas</h3>
                             <div className="ccButtons">
-                                <a href="/login" className="ccButton ccButton--primary">
+                                <Link to="/login" className="ccButton ccButton--primary">
                                     ¡Empieza a coleccionar!
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@ function MainPageComponent() {
                 </div>
             </section>
             <MovieCarouselComponent />
-            <FooterComponent/>
+            <FooterComponent />
         </>
     );
 }
