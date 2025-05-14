@@ -7,6 +7,7 @@ var logger = require('morgan');
 var session = require('express-session');
 const conectarBBDD = require('./config/db');
 const dotenv = require('dotenv');
+const isProduction = process.env.NODE_ENV === 'production';
 const env = process.env.NODE_ENV || 'development';
 dotenv.config({ path: `.env.${env}` });
 
@@ -37,7 +38,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: "78789689689790789689689798789",
   saveUninitialized: true,
-  resave: true
+  resave: true,
+  cookie: {
+    secure: isProduction, // true en producción, false en desarrollo
+    sameSite: isProduction ? 'none' : 'lax' // 'none' permite cookies entre dominios
+  }
 }));
 
 // Rutas
