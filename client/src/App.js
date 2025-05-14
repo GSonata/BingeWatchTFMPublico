@@ -38,7 +38,7 @@ function App() {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
+            await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, { withCredentials: true });
             logout();
             setIsAuthenticated(false);
         } catch (err) {
