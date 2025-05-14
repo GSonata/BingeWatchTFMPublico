@@ -30,8 +30,9 @@ function MovieCarouselComponent() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
+        const baseUrl = process.env.REACT_APP_API_URL;
         const moviePromises = imdbIDs.map(id =>
-          axios.get(`http://localhost:3000/movies/${id}`, { withCredentials: true }).then(res => res.data)
+          axios.get(`${baseUrl}/movies/${id}`, { withCredentials: true }).then(res => res.data)
         );
         const movieData = await Promise.all(moviePromises);
         setMovies(movieData);

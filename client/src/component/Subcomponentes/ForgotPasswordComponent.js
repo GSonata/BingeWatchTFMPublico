@@ -3,7 +3,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import '../../styles/forgot-password.scss';
 
-
 function ForgotPasswordModalComponent({ onClose }) {
   const [email, setEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -15,7 +14,8 @@ function ForgotPasswordModalComponent({ onClose }) {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:3000/auth/request-password-reset', { email });
+      const baseUrl = process.env.REACT_APP_API_URL;
+      const res = await axios.post(`${baseUrl}/auth/request-password-reset`, { email });
       Swal.fire('📨 Revisa tu correo', 'Hemos enviado instrucciones para restablecer tu contraseña.', 'success');
       setEmail('');
       onClose();
@@ -29,9 +29,9 @@ function ForgotPasswordModalComponent({ onClose }) {
   return (
     <div className="forgot-modal-overlay" onClick={onClose}>
       <div className="forgot-modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="forgot-modal-close" onClick={onClose}>×</button>
-      <h3>Recuperar contraseña</h3>
-      <h4>Introduce tu email para recibir un correo, con el que podrás recuperar tu contraseña</h4>
+        <button className="forgot-modal-close" onClick={onClose}>×</button>
+        <h3>Recuperar contraseña</h3>
+        <h4>Introduce tu email para recibir un correo, con el que podrás recuperar tu contraseña</h4>
         <form onSubmit={handleRequest}>
           <input
             type="email"

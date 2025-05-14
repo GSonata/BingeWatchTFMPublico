@@ -9,11 +9,12 @@ const NotificationsPanelComponent = () => {
   const [notificaciones, setNotificaciones] = useState([]);
   const [isExpanded, setIsExpanded] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const baseUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchNotificaciones = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/notifications', {
+        const res = await axios.get(`${baseUrl}/notifications`, {
           withCredentials: true
         });
         setNotificaciones(res.data);
@@ -30,7 +31,7 @@ const NotificationsPanelComponent = () => {
     if (isExpanded) {
       const unread = notificaciones.filter(n => !n.isRead).map(n => n._id);
       if (unread.length > 0) {
-        axios.post('http://localhost:3000/notifications/mark-read', { ids: unread }, { withCredentials: true })
+        axios.post(`${baseUrl}/notifications/mark-read`, { ids: unread }, { withCredentials: true })
           .then(() => {
             setNotificaciones(prev => prev.map(n => ({ ...n, isRead: true })));
             setUnreadCount(0);
@@ -42,7 +43,7 @@ const NotificationsPanelComponent = () => {
 
   const handleDeleteNotification = async (notifId) => {
     try {
-      await axios.delete(`http://localhost:3000/notifications/${notifId}`, {
+      await axios.delete(`${baseUrl}/notifications/${notifId}`, {
         withCredentials: true
       });
       setNotificaciones((prev) => prev.filter(n => n._id !== notifId));

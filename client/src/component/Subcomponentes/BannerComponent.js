@@ -22,7 +22,8 @@ const BannerComponent = () => {
     useEffect(() => {
         const fetchSessionUser = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/auth/check-session', {
+                const baseUrl = process.env.REACT_APP_API_URL;
+                const res = await axios.get(`${baseUrl}/auth/check-session`, {
                     withCredentials: true
                 });
                 if (res.data && res.data.user) {
@@ -53,7 +54,8 @@ const BannerComponent = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
+            const baseUrl = process.env.REACT_APP_API_URL;
+            await axios.post(`${baseUrl}/logout`, {}, { withCredentials: true });
             logout();
             setIsAuthenticated(false);
 

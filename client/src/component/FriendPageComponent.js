@@ -22,10 +22,11 @@ const FriendPageComponent = () => {
     useEffect(() => {
         const fetchFriendData = async () => {
             try {
+                const baseUrl = process.env.REACT_APP_API_URL;
                 const [profileRes, historyRes, friendRes] = await Promise.all([
-                    axios.get(`http://localhost:3000/user/profile/${userId}`, { withCredentials: true }),
-                    axios.get(`http://localhost:3000/user/history/${userId}`, { withCredentials: true }),
-                    axios.get(`http://localhost:3000/is-friend/${userId}`, { withCredentials: true })
+                    axios.get(`${baseUrl}/user/profile/${userId}`, { withCredentials: true }),
+                    axios.get(`${baseUrl}/user/history/${userId}`, { withCredentials: true }),
+                    axios.get(`${baseUrl}/is-friend/${userId}`, { withCredentials: true })
                 ]);
 
                 setUserData(profileRes.data);
@@ -41,8 +42,9 @@ const FriendPageComponent = () => {
 
     const toggleFriend = async () => {
         try {
+            const baseUrl = process.env.REACT_APP_API_URL;
             if (isFriend) {
-                await axios.delete(`http://localhost:3000/remove/${userId}`, { withCredentials: true });
+                await axios.delete(`${baseUrl}/remove/${userId}`, { withCredentials: true });
                 setIsFriend(false);
                 Swal.fire({
                     text: `Has dejado de seguir a @${userData.alias}`,
@@ -56,7 +58,7 @@ const FriendPageComponent = () => {
                     color: '#f5f5f5',
                 });
             } else {
-                await axios.post(`http://localhost:3000/add/${userId}`, {}, { withCredentials: true });
+                await axios.post(`${baseUrl}/add/${userId}`, {}, { withCredentials: true });
                 setIsFriend(true);
                 Swal.fire({
                     text: `Ahora sigues a @${userData.alias}`,

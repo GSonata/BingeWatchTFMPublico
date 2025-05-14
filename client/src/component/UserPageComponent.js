@@ -15,10 +15,12 @@ const UserPageComponent = () => {
         watchlist: []
     });
 
+    const baseUrl = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/user/history', {
+                const res = await axios.get(`${baseUrl}/user/history`, {
                     withCredentials: true
                 });
                 setHistory(res.data);
@@ -29,7 +31,7 @@ const UserPageComponent = () => {
 
         const fetchSessionUser = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/auth/check-session', {
+                const res = await axios.get(`${baseUrl}/auth/check-session`, {
                     withCredentials: true
                 });
                 if (res.data && res.data.user) {
@@ -52,7 +54,7 @@ const UserPageComponent = () => {
         reader.onloadend = async () => {
             const base64Image = reader.result.split(',')[1];
             try {
-                await axios.put('http://localhost:3000/user/profile-image', {
+                await axios.put(`${baseUrl}/user/profile-image`, {
                     base64Image
                 }, { withCredentials: true });
 
@@ -83,7 +85,7 @@ const UserPageComponent = () => {
         if (newAlias && newAlias !== userData.alias) {
             try {
                 await axios.put(
-                    'http://localhost:3000/user/update-alias',
+                    `${baseUrl}/user/update-alias`,
                     { newAlias },
                     { withCredentials: true }
                 );

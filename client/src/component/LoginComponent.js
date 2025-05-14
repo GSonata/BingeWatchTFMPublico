@@ -22,7 +22,8 @@ function LoginComponent() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3000/login', {
+      const baseUrl = process.env.REACT_APP_API_URL;
+      const response = await axios.post(`${baseUrl}/login`, {
         user,
         password,
       }, { withCredentials: true });

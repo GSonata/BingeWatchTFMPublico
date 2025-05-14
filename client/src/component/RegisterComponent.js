@@ -15,6 +15,8 @@ function RegisterComponent({ onClose }) {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+    const baseUrl = process.env.REACT_APP_API_URL;
+
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
@@ -55,9 +57,8 @@ function RegisterComponent({ onClose }) {
             setError('');
         }
 
-
         try {
-            const response = await axios.post('http://localhost:3000/register', {
+            const response = await axios.post(`${baseUrl}/register`, {
                 user,
                 email,
                 alias,

@@ -4,8 +4,7 @@ import ReactStars from 'react-stars';
 import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 import ConfirmRatingModal from './Subcomponentes/Modales/ConfirmRatingModal';
-
-import "../styles/UserInteracion.scss"
+import "../styles/UserInteracion.scss";
 
 const Toast = Swal.mixin({
     toast: true,
@@ -15,8 +14,7 @@ const Toast = Swal.mixin({
     timerProgressBar: true,
     background: '#2a2f36',
     color: '#ffffff'
-  });
-  
+});
 
 const UserInteractionComponent = ({ imdbID }) => {
     const [rating, setRating] = useState(0);
@@ -24,10 +22,12 @@ const UserInteractionComponent = ({ imdbID }) => {
     const [pendingRating, setPendingRating] = useState(null);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
+    const baseUrl = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         const fetchRating = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/user/rating/${imdbID}`, {
+                const res = await axios.get(`${baseUrl}/user/rating/${imdbID}`, {
                     withCredentials: true
                 });
                 if (res.data.nota) {
@@ -39,7 +39,7 @@ const UserInteractionComponent = ({ imdbID }) => {
         };
 
         fetchRating();
-    }, [imdbID]);
+    }, [imdbID, baseUrl]);
 
     const handleRatingChange = (newRating) => {
         setPendingRating(newRating);
@@ -49,7 +49,7 @@ const UserInteractionComponent = ({ imdbID }) => {
     const handleConfirmRating = async (confirmedRating) => {
         try {
             const res = await axios.post(
-                'http://localhost:3000/user/rating',
+                `${baseUrl}/user/rating`,
                 {
                     imdbID,
                     nota: confirmedRating,
@@ -61,7 +61,6 @@ const UserInteractionComponent = ({ imdbID }) => {
             setRating(confirmedRating);
             setIsConfirmModalOpen(false);
 
-            // Opcional: feedback visual
             Toast.fire({ icon: 'success', title: 'Calificación guardada' });
 
             if (res.data.nuevasInsignias?.length > 0) {
@@ -83,17 +82,15 @@ const UserInteractionComponent = ({ imdbID }) => {
 
     const toggleWatchlist = async () => {
         try {
-          const res = await axios.post('http://localhost:3000/user/watchlist', {
-            imdbID
-          }, { withCredentials: true });
-      
-          setWatchlisted(res.data.watchlist.includes(imdbID));
-        } catch (err) {
-          console.error('Error al actualizar watchlist:', err);
-        }
-      };
-      
+            const res = await axios.post(`${baseUrl}/user/watchlist`, {
+                imdbID
+            }, { withCredentials: true });
 
+            setWatchlisted(res.data.watchlist.includes(imdbID));
+        } catch (err) {
+            console.error('Error al actualizar watchlist:', err);
+        }
+    };
 
     return (
         <div className="user-interaction-panel">
@@ -130,10 +127,7 @@ const UserInteractionComponent = ({ imdbID }) => {
                 onConfirm={handleConfirmRating}
                 onCancel={() => setIsConfirmModalOpen(false)}
             />
-
         </div>
-
-
     );
 };
 

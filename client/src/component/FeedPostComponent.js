@@ -1,4 +1,3 @@
-// FeedPostComponent.jsx
 import React from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -25,7 +24,8 @@ const FeedPostComponent = ({
     const handleLike = async (e) => {
         e.preventDefault();
         try {
-            const endpoint = `http://localhost:3000/interactions/${item._id}/${hasLiked ? 'unlike' : 'like'}`;
+            const baseUrl = process.env.REACT_APP_API_URL;
+            const endpoint = `${baseUrl}/interactions/${item._id}/${hasLiked ? 'unlike' : 'like'}`;
             await axios.post(endpoint, {}, { withCredentials: true });
 
             setActivity((prev) =>
@@ -53,8 +53,9 @@ const FeedPostComponent = ({
         if (!commentText.trim()) return;
 
         try {
+            const baseUrl = process.env.REACT_APP_API_URL;
             const res = await axios.post(
-                `http://localhost:3000/interactions/${item._id}/comment`,
+                `${baseUrl}/interactions/${item._id}/comment`,
                 { text: commentText },
                 { withCredentials: true }
             );
@@ -87,7 +88,8 @@ const FeedPostComponent = ({
         if (!confirmDelete.isConfirmed) return;
 
         try {
-            await axios.delete(`http://localhost:3000/interactions/${item._id}/comment/${commentId}`, {
+            const baseUrl = process.env.REACT_APP_API_URL;
+            await axios.delete(`${baseUrl}/interactions/${item._id}/comment/${commentId}`, {
                 withCredentials: true
             });
             setCommentsMap((prev) => ({
@@ -100,7 +102,7 @@ const FeedPostComponent = ({
     };
 
     return (
-        <div className={`activity-block-wrapper ${item.type}`}> {/* Dinámico por tipo */}
+        <div className={`activity-block-wrapper ${item.type}`}>
             <div className="activity-block">
                 {item.type === 'badge' && item.badge ? (
                     <div className="activity-card" data-type="badge" data-username={item.alias}>

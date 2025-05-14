@@ -23,7 +23,8 @@ const FriendActivityComponent = () => {
     useEffect(() => {
         const fetchSessionUser = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/auth/check-session', {
+                const baseUrl = process.env.REACT_APP_API_URL;
+                const res = await axios.get(`${baseUrl}/auth/check-session`, {
                     withCredentials: true
                 });
                 if (res.data && res.data.user) {
@@ -40,7 +41,8 @@ const FriendActivityComponent = () => {
     useEffect(() => {
         const fetchActivity = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/friend-activity', { withCredentials: true });
+                const baseUrl = process.env.REACT_APP_API_URL;
+                const res = await axios.get(`${baseUrl}/friend-activity`, { withCredentials: true });
                 setActivity(res.data);
 
                 const initialLikes = {};
@@ -88,11 +90,11 @@ const FriendActivityComponent = () => {
         };
     }, [activity, visibleItems]);
 
-
     useEffect(() => {
         const fetchMonthlyBadge = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/badge/monthly', {
+                const baseUrl = process.env.REACT_APP_API_URL;
+                const res = await axios.get(`${baseUrl}/badge/monthly`, {
                     withCredentials: true
                 });
                 if (res.data) setMonthlyBadge(res.data);
@@ -103,7 +105,6 @@ const FriendActivityComponent = () => {
 
         fetchMonthlyBadge();
     }, []);
-
 
     return (
         <>
@@ -146,7 +147,6 @@ const FriendActivityComponent = () => {
                             </div>
                         </div>
                     )}
-
                 </div>
             </div>
             <FooterComponent />

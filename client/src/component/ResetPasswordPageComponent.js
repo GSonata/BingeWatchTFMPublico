@@ -10,6 +10,8 @@ function ResetPasswordPageComponent() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
 
+  const baseUrl = process.env.REACT_APP_API_URL;
+
   const handleReset = async (e) => {
     e.preventDefault();
     if (password !== confirm) {
@@ -18,7 +20,10 @@ function ResetPasswordPageComponent() {
     }
 
     try {
-      await axios.post('http://localhost:3000/auth/reset-password', { token, newPassword: password });
+      await axios.post(`${baseUrl}/auth/reset-password`, {
+        token,
+        newPassword: password
+      });
       Swal.fire('✅ Contraseña actualizada', 'Ahora puedes iniciar sesión con tu nueva contraseña.', 'success');
       navigate('/login');
     } catch (err) {

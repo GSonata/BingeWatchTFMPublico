@@ -11,12 +11,14 @@ const UserBadgesComponent = ({ userId }) => {
     const [showModal, setShowModal] = useState(false);
     const tooltipsRef = useRef([]);
 
+    const baseUrl = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         const fetchBadges = async () => {
             try {
                 const url = userId
-                    ? `http://localhost:3000/user/badges/${userId}`
-                    : `http://localhost:3000/user/badges`;
+                    ? `${baseUrl}/user/badges/${userId}`
+                    : `${baseUrl}/user/badges`;
 
                 const res = await axios.get(url, { withCredentials: true });
                 setBadges(res.data || []);
@@ -65,7 +67,6 @@ const UserBadgesComponent = ({ userId }) => {
                         Ver todas las insignias
                     </button>
                 )}
-
             </div>
             {showModal && <AllBadgesModal onClose={() => setShowModal(false)} />}
             <div className="badges-bar">
@@ -103,7 +104,7 @@ const UserBadgesComponent = ({ userId }) => {
                             {badge.descripcion}<br />
                             <em>
                                 {badge.fechaAdquisicion
-                                    ? `Obtenida el ${dayjs(badge.fechaAdquisicion).format('D [de] MMMM [de] YYYY')}`
+                                    ? `Obtenida el ${dayjs(badge.fechaAdquisicion).locale('es').format('D [de] MMMM [de] YYYY')}`
                                     : 'Fecha no disponible'}
                             </em>
                         </div>

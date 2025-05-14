@@ -7,25 +7,23 @@ import "../styles/UserHistoryComponent.scss";
 const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
     const [postersMap, setPostersMap] = useState({});
     const [activeTab, setActiveTab] = useState('coleccion');
-
+    const baseUrl = process.env.REACT_APP_API_URL;
 
     const renderStars = (nota) => {
         const stars = [];
         const fullStars = Math.floor(nota);
         const hasHalfStar = nota % 1 >= 0.25 && nota % 1 < 0.75;
-      
-        for (let i = 0; i < fullStars; i++) {
-          stars.push(<FaStar key={`star-full-${i}`} color="#3b9ded" />);
-        }
-      
-        if (hasHalfStar) {
-          stars.push(<FaStarHalfAlt key="star-half" color="#3b9ded" />);
-        }
-      
-        return <div className="stars">{stars}</div>;
-      };
-    
 
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<FaStar key={`star-full-${i}`} color="#3b9ded" />);
+        }
+
+        if (hasHalfStar) {
+            stars.push(<FaStarHalfAlt key="star-half" color="#3b9ded" />);
+        }
+
+        return <div className="stars">{stars}</div>;
+    };
 
     useEffect(() => {
         const fetchPosters = async () => {
@@ -39,7 +37,7 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
             try {
                 const posters = await Promise.all(
                     imdbIDs.map(async id => {
-                        const res = await axios.get(`http://localhost:3000/movies/${id}`);
+                        const res = await axios.get(`${baseUrl}/movies/${id}`);
                         return { imdbID: id, poster: res.data.poster, title: res.data.title };
                     })
                 );
@@ -56,7 +54,7 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
         };
 
         fetchPosters();
-    }, [peliculasVistas, watchlist]);
+    }, [peliculasVistas, watchlist, baseUrl]);
 
     const renderVistasGrid = () => (
         <div className="movie-grid">
@@ -73,8 +71,6 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
             })}
         </div>
     );
-
-
 
     const renderWatchlistGrid = () => (
         <div className="movie-grid">

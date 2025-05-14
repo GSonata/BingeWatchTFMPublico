@@ -32,10 +32,12 @@ const UserCollectionPage = () => {
 
     const [activeTab, setActiveTab] = useState('coleccion');
 
+    const baseUrl = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/user/history', {
+                const res = await axios.get(`${baseUrl}/user/history`, {
                     withCredentials: true
                 });
 
