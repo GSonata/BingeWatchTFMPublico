@@ -16,14 +16,13 @@ var app = express();
 // Conectar a la base de datos
 conectarBBDD();
 
-// Configuración de CORS para permitir solicitudes desde el puerto 3001
+// Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors({
-  origin: 'http://localhost:3001',  
+  origin: process.env.FRONTEND_URL || 'http://localhost:3001', // fallback útil para desarrollo local
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,              
-  allowedHeaders: ['Content-Type', 'Authorization'] 
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,7 +57,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-// Configuración para producción
+// Configuración para producción (React frontend)
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
   app.get('*', (req, res) => {
