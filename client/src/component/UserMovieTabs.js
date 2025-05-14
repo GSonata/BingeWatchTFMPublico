@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { animate } from 'animejs';
+import { FaStar, FaStarHalfAlt, FaFilm, FaEye, FaBookmark } from 'react-icons/fa';
 
 const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setActiveTab }) => {
     useEffect(() => {
@@ -30,29 +31,44 @@ const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setAc
         });
     };
 
+    const renderStars = (nota) => {
+        const stars = [];
+        const fullStars = Math.floor(nota);
+        const hasHalfStar = nota % 1 >= 0.25 && nota % 1 < 0.75;
+
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<FaStar key={`star-${i}`} color="#3b9ded" />);
+        }
+
+        if (hasHalfStar) {
+            stars.push(<FaStarHalfAlt key="star-half" color="#3b9ded" />);
+        }
+
+        return <div className="stars">{stars}</div>;
+    };
+
     const renderColeccion = () => (
         <div className="cards-grid">
             {coleccion.map((pelicula) => (
                 <Link to={`/movies/${pelicula.imdbID}`} key={pelicula.imdbID} className="card" onClick={handleBounce}>
-                    <img
-                        src={pelicula.poster}
-                        alt={pelicula.title}
-                        className="poster"
-                    />
+                    <img src={pelicula.poster} alt={pelicula.title} className="poster" />
                     <div className="title">{pelicula.title} ({pelicula.año})</div>
-                    <p>🎞️ {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}</p>
+                    <div className="copias">🎞️ {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}</div>
                 </Link>
             ))}
         </div>
     );
-    
+
     const renderVistas = () => (
         <div className="cards-grid">
-            {peliculasVistas.map((vista, idx) => (
-                <Link to={`/movies/${vista.imdbID}`} key={idx} className="card" onClick={handleBounce}>
+            {peliculasVistas.map((vista) => (
+                <Link to={`/movies/${vista.imdbID}`} key={vista.imdbID} className="card" onClick={handleBounce}>
                     <img src={vista.poster} alt={vista.title} className="poster" />
                     <div className="title">{vista.title} ({vista.año})</div>
-                    <p>⭐ {vista.nota} - {new Date(vista.fechaVisualizacion).toLocaleDateString()}</p>
+                    <div className="vistas-info">
+                        {renderStars(vista.nota)}
+                        <span className='fechaVisualizacion'>{new Date(vista.fechaVisualizacion).toLocaleDateString()}</span>
+                    </div>
                 </Link>
             ))}
         </div>
@@ -64,6 +80,7 @@ const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setAc
                 <Link to={`/movies/${peli.imdbID}`} key={peli.imdbID} className="card" onClick={handleBounce}>
                     <img src={peli.poster} alt={peli.title} className="poster" />
                     <div className="title">{peli.title} ({peli.año})</div>
+                    <div className="copias">En tu lista</div>
                 </Link>
             ))}
         </div>
@@ -76,19 +93,19 @@ const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setAc
                     className={activeTab === 'coleccion' ? 'active' : ''}
                     onClick={() => setActiveTab('coleccion')}
                 >
-                    🎬 Colección
+                    <FaFilm /> Colección
                 </button>
                 <button
                     className={activeTab === 'vistas' ? 'active' : ''}
                     onClick={() => setActiveTab('vistas')}
                 >
-                    👁️ Vistas
+                    <FaEye /> Vistas
                 </button>
                 <button
                     className={activeTab === 'watchlist' ? 'active' : ''}
                     onClick={() => setActiveTab('watchlist')}
                 >
-                    📌 Watchlist
+                    <FaBookmark /> Watchlist
                 </button>
             </div>
 

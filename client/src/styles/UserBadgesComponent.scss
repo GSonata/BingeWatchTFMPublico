@@ -1,0 +1,147 @@
+@import './variables.css';
+
+.badges-container {
+  flex: 1;
+  padding: var(--padding-medium);
+  min-width: 300px;
+  background-color: var(--card-background-soft);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--box-shadow-soft);
+}
+
+.badges-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--padding-medium);
+  gap: var(--gap-medium);
+
+  h3 {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--white);
+    margin: 0;
+  }
+
+  .view-all-badges-btn {
+    background-color: var(--blue-soft);
+    color: var(--gray-black);
+    border: none;
+    border-radius: var(--border-radius-button);
+    font-size: var(--font-size-sm);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition);
+
+    &:hover {
+      background-color: var(--blue-soft-dark);
+    }
+  }
+}
+
+
+.badges-container h3 {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--white);
+  margin-bottom: var(--padding-small);
+}
+
+.view-all-badges-btn {
+  background-color: var(--blue-soft);
+  color: var(--gray-black);
+  border: none;
+  border-radius: var(--border-radius-button);
+  font-size: var(--font-size-sm);
+  padding: 0.4rem 0.8rem;
+  margin-bottom: var(--padding-medium);
+  cursor: pointer;
+  transition: background-color var(--transition);
+
+  &:hover {
+    background-color: var(--blue-hover);
+  }
+}
+
+.badges-bar {
+  display: flex;
+  gap: var(--gap-medium);
+  flex-wrap: wrap;
+  background-color: var(--background-glass-dark);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius-xl);
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.badge-card {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: var(--border-radius-xl);
+  background-color: var(--gray-darker);
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  box-shadow: var(--box-shadow-blue);
+
+  &:hover {
+    transform: scale(1.08);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--border-radius-lg);
+  }
+
+  .tooltip {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background-color: var(--gray-black);
+    color: var(--text-color);
+    padding: 0.7rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: var(--box-shadow-soft);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    max-width: 200px;
+    text-align: center;
+
+    strong {
+      color: var(--white);
+    }
+
+    em {
+      font-size: 0.7rem;
+      color: var(--gray-medium-light);
+      display: block;
+      margin-top: 4px;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .badge-card {
+    width: 80px;
+    height: 80px;
+  }
+
+  .badge-card .tooltip {
+    font-size: 0.65rem;
+    padding: 0.5rem;
+  }
+}

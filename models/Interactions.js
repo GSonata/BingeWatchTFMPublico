@@ -11,20 +11,20 @@ const commentSchema = new mongoose.Schema({
 const interactionSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['coleccion', 'vista', 'watchlist', 'badge'], // ✅ Añadido 'badge'
+    enum: ['coleccion', 'vista', 'watchlist', 'badge'], 
     required: true
   },
   imdbID: {
     type: String,
     required: function () {
-      return this.type !== 'badge'; // ✅ Requerido solo si NO es 'badge'
+      return this.type !== 'badge'; 
     }
   },
   badgeId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Badge',
     required: function () {
-      return this.type === 'badge'; // ✅ Solo requerido si ES 'badge'
+      return this.type === 'badge'; 
     }
   },
   date: { type: Date, required: true },

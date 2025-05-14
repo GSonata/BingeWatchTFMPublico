@@ -23,8 +23,8 @@ const {
   deleteNotification,
   markNotificationsAsRead
 } = require('../controllers/socialController');
-const { getAllBadges } = require('../controllers/badgeController');
-const { sendMail } = require('../controllers/mailController');
+const { getAllBadges, getMonthlyBadgeProgress  } = require('../controllers/badgeController');
+const { sendMail, requestPasswordReset, resetPassword } = require('../controllers/mailController');
 
 
 /* ESTAS DOS LINEAS SE CREARON/EJECUTARON PARA LA MIGRACIÓN DE DATOS A LA BBDD */
@@ -103,8 +103,12 @@ router.delete('/notifications/:id', deleteNotification);
 
 // Ruta para enviar correo desde la página de contacto
 router.post('/contact/send', sendMail);
+router.post('/auth/request-password-reset', requestPasswordReset);
+router.post('/auth/reset-password', resetPassword);
+
 
 router.get('/badges/all', getAllBadges);
+router.get('/badge/monthly', getMonthlyBadgeProgress);
 
 
 module.exports = router;

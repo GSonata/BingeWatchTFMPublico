@@ -1,0 +1,101 @@
+@import './variables.css';
+
+.user-history-tabs {
+  border: var(--border-subtle);
+  border-radius: var(--border-radius-xl);
+  padding: var(--padding-large);
+  margin-top: var(--padding-large);
+  background-color: var(--card-background-soft);
+  color: var(--text-color);
+  box-shadow: var(--box-shadow-soft);
+  min-height: 600px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: var(--padding-medium);
+}
+
+.tabs button {
+  flex: 1;
+  width: fit-content;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--gray-darker);
+  color: var(--gray-medium-light);
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color var(--transition), color var(--transition);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+
+  &:hover {
+    background-color: var(--gray-dark);
+  }
+
+  &.active {
+    background-color: var(--blue-soft-dark);
+    color: var(--white);
+  }
+}
+
+.tab-content {
+  padding-top: var(--padding-medium);
+}
+
+.movie-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-medium);
+  justify-content: flex-start;
+}
+
+.movie-card {
+  width: 180px;
+  text-align: center;
+  background-color: var(--background-glass-dark);
+  padding: var(--padding-small);
+  border-radius: var(--border-radius-xl);
+  transition: transform 0.2s ease, background-color var(--transition);
+  color: var(--text-color);
+  text-decoration: none;
+  box-shadow: var(--box-shadow-soft);
+
+  &:hover {
+    transform: scale(1.03);
+    background-color: var(--gray-darker);
+  }
+
+  img {
+    width: 100%;
+    border-radius: var(--border-radius);
+  }
+
+  h4 {
+    margin: 0.6rem 0 0.3rem;
+    font-size: var(--font-size-sm);
+    color: var(--white);
+  }
+
+  p {
+    font-size: var(--font-size-sm);
+    color: var(--gray-light);
+    margin: 0.2rem 0;
+  }
+
+  .stars {
+    display: flex;
+    justify-content: center; 
+    gap: 0.2rem;
+    margin: 0.3rem 0;
+    font-size: 1.2rem;
+    padding: 5px 10px;
+  
+    svg {
+      vertical-align: middle;
+    }
+  }
+  
+
+}

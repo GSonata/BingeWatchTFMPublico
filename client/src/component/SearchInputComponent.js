@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import '../styles/SearchInputComponent.scss';
 
 const SearchInputComponent = () => {
     const [query, setQuery] = useState('');
@@ -12,25 +15,16 @@ const SearchInputComponent = () => {
     };
 
     return (
-        <input
-            type="text"
-            placeholder="Buscar películas o usuarios..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            style={{
-                width: '100%',
-                maxWidth: '500px',
-                padding: '0.8rem',
-                fontSize: '1rem',
-                borderRadius: 'var(--border-radius)',
-                border: 'none',
-                marginBottom: '1.5rem',
-                backgroundColor: 'var(--card-background)',
-                color: 'var(--text-color)',
-                outline: 'none'
-            }}
-        />
+        <div className="search-input-wrapper">
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
+            <input
+                type="text"
+                placeholder="Buscar..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+            />
+        </div>
     );
 };
 

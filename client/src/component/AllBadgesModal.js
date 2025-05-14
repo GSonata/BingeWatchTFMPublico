@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import '../styles/AllBadgesModal.css';
+import '../styles/AllBadgesModal.scss';
 
 const AllBadgesModal = ({ onClose }) => {
     const [allBadges, setAllBadges] = useState([]);
@@ -17,10 +17,8 @@ const AllBadgesModal = ({ onClose }) => {
                 const user = await resUser.json();
 
                 setAllBadges(all);
-                setUserBadges(user); // GUARDAMOS OBJETOS COMPLETOS
+                setUserBadges(user); 
 
-                console.log('🎯 ALL BADGES:', all);
-                console.log('✅ USER BADGES:', user);
             } catch (err) {
                 console.error('Error al cargar insignias:', err);
             }
@@ -32,7 +30,9 @@ const AllBadgesModal = ({ onClose }) => {
     const isUnlocked = (id) => userBadges.some(b => b.id === id);
     const getBadgeData = (id) => userBadges.find(b => b.id === id);
 
-    const sortedBadges = [...allBadges].sort((a, b) => {
+    const sortedBadges = [...allBadges]
+    .filter(badge => badge.id !== 'Insignia_Mes')
+    .sort((a, b) => {
         const aUnlocked = isUnlocked(a.id);
         const bUnlocked = isUnlocked(b.id);
         return aUnlocked === bUnlocked ? 0 : aUnlocked ? -1 : 1;

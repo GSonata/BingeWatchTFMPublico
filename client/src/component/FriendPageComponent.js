@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
 import UserHistoryComponent from './UserHistoryComponent';
 import UserBadgesComponent from './UserBadgesComponent';
-import '../styles/UserPageComponent.css';
+import FooterComponent from './Subcomponentes/FooterComponent';
+import BannerComponent from './Subcomponentes/BannerComponent';
+import '../styles/UserPageComponent.scss';
 
 const FriendPageComponent = () => {
     const { userId } = useParams();
@@ -52,22 +54,10 @@ const FriendPageComponent = () => {
                     showConfirmButton: false,
                     background: '#1c1c1c',
                     color: '#f5f5f5',
-                    showClass: {
-                        popup: 'swal2-toast-show'
-                    },
-                    hideClass: {
-                        popup: 'swal2-toast-hide'
-                    },
-                    customClass: {
-                        popup: 'swal2-toast-custom red'
-                    }
                 });
-
-
             } else {
                 await axios.post(`http://localhost:3000/add/${userId}`, {}, { withCredentials: true });
                 setIsFriend(true);
-
                 Swal.fire({
                     text: `Ahora sigues a @${userData.alias}`,
                     icon: 'success',
@@ -78,75 +68,71 @@ const FriendPageComponent = () => {
                     showConfirmButton: false,
                     background: '#1c1c1c',
                     color: '#f5f5f5',
-                    showClass: {
-                        popup: 'swal2-toast-show'
-                    },
-                    hideClass: {
-                        popup: 'swal2-toast-hide'
-                    },
-                    customClass: {
-                        popup: 'swal2-toast-custom green'
-                    }
                 });
-
             }
         } catch (err) {
-            console.error('❌ Error al modificar amistad:', err.message);
-            Swal.fire({
-                title: 'Error',
-                text: 'Algo salió mal al modificar la amistad.',
-                icon: 'error',
-                background: '#1c1c1c',
-                color: '#f5f5f5',
-            });
+            Swal.fire('❌ Error', 'No se pudo modificar la amistad.', 'error');
         }
     };
-
 
     if (!userData) return <p>Cargando perfil...</p>;
 
     return (
-        <div className="user-page-container">
-            <div className="user-header">
-                <div className="user-profile-img-container">
-                    {userData.imagenPerfil && (
-                        <img
-                            src={`data:image/jpeg;base64,${userData.imagenPerfil}`}
-                            alt="Perfil"
-                            className="user-profile-img"
-                        />
-                    )}
-                </div>
-
-                <div className="user-info">
-                    <div className="user-info-header">
-                        <span className="username">@{userData.alias}</span>
-                        <button
-                            className={`friend-button ${isFriend ? 'added' : ''}`}
-                            onClick={toggleFriend}
-                            onMouseEnter={() => setHover(true)}
-                            onMouseLeave={() => setHover(false)}
-                        >
-                            {isFriend ? (hover ? 'Dejar de seguir' : 'Siguiendo') : '➕ Seguir'}
-                        </button>
+        <>
+            <BannerComponent />
+            <div className="user-page-container">
+                <div className="user-top-section">
+                    <div className="user-header">
+                        <div className="user-profile-img-container">
+                            {userData.imagenPerfil && (
+                                <img
+                                    src={`data:image/jpeg;base64,${userData.imagenPerfil}`}
+                                    alt="Perfil"
+                                    className="user-profile-img"
+                                />
+                            )}
+                        </div>
+                        <div className="user-info">
+                            <div className="user-info-header">
+                                <span className="username">@{userData.alias}</span>
+                                <button
+                                    className={`friend-button ${isFriend ? 'added' : ''}`}
+                                    onClick={toggleFriend}
+                                    onMouseEnter={() => setHover(true)}
+                                    onMouseLeave={() => setHover(false)}
+                                >
+                                    {isFriend ? (hover ? 'Dejar de seguir' : 'Siguiendo') : '➕ Seguir'}
+                                </button>
+                            </div>
+                            <div className="user-stats-box">
+                                <div className="stat">
+                                    <p>📦</p>
+                                    <div className="label">Colección</div>
+                                    <div className="value">{history.coleccion.length}</div>
+                                </div>
+                                <div className="divider"></div>
+                                <div className="stat">
+                                    <p>👁️</p>
+                                    <div className="label">Vistas</div>
+                                    <div className="value">{history.peliculasVistas.length}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="user-stats">
-                        🎬 <strong>Colección:</strong> {history.coleccion.length} &nbsp;&nbsp;
-                        👁️ <strong>Vistas:</strong> {history.peliculasVistas.length}
-                    </div>
+                    <UserBadgesComponent userId={userId} />
                 </div>
+
+                <h2 className="history-title">📚 Historial de actividad</h2>
+
+                <UserHistoryComponent
+                    coleccion={history.coleccion}
+                    peliculasVistas={history.peliculasVistas}
+                    watchlist={history.watchlist}
+                />
             </div>
-
-            <UserBadgesComponent userId={userId} />
-            <h2>📚 Historial de actividad</h2>
-
-            <UserHistoryComponent
-                coleccion={history.coleccion}
-                peliculasVistas={history.peliculasVistas}
-                watchlist={history.watchlist}
-            />
-        </div>
+            <FooterComponent />
+        </>
     );
 };
 

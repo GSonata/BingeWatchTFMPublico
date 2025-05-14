@@ -1,0 +1,123 @@
+.friend-activity-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    padding: var(--padding-large);
+    gap: 2rem;
+    color: var(--text-color);
+  }
+  
+  /* Columna izquierda */
+  .feed-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 65%;
+  }
+  
+  /* Columna lateral derecha */
+  .side-column {
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: var(--padding-large);
+    background-color: var(--card-background-soft);
+    border-radius: var(--border-radius-xl);
+    border: var(--border-subtle);
+    box-shadow: var(--box-shadow-soft);
+  }
+  
+  /* === Accordion de notificaciones === */
+  .notifications-panel-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .accordion-header {
+    background-color: var(--gray-darker);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color var(--transition);
+  }
+  
+  .accordion-header:hover {
+    background-color: var(--gray-dark);
+  }
+  
+  .accordion-content {
+    background-color: var(--gray-almost-black);
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1rem;
+    font-size: var(--font-size-sm);
+    color: var(--gray-light);
+  }
+  
+  /* === Progreso de insignia del mes === */
+  .badge-monthly-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: var(--gray-darker);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+  }
+  
+  .badge-monthly-title {
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    color: var(--white);
+  }
+  
+  .badge-progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: var(--gray-medium-dark);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .badge-progress-fill {
+    height: 100%;
+    background-color: var(--blue);
+    transition: width 0.4s ease-in-out;
+  }
+  
+  .badge-monthly-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: var(--gray-darker);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .badge-monthly-title {
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    color: var(--white);
+  }
+  
+  .badge-progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: var(--gray-medium-dark);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .badge-progress-fill {
+    height: 100%;
+    background-color: var(--blue);
+    transition: width 0.4s ease-in-out;
+  }

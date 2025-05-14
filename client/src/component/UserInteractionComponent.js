@@ -3,10 +3,26 @@ import Swal from 'sweetalert2';
 import ReactStars from 'react-stars';
 import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
+import ConfirmRatingModal from './Subcomponentes/Modales/ConfirmRatingModal';
+
+import "../styles/UserInteracion.scss"
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    background: '#2a2f36',
+    color: '#ffffff'
+  });
+  
 
 const UserInteractionComponent = ({ imdbID }) => {
     const [rating, setRating] = useState(0);
     const [watchlisted, setWatchlisted] = useState(false);
+    const [pendingRating, setPendingRating] = useState(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchRating = async () => {
@@ -25,82 +41,99 @@ const UserInteractionComponent = ({ imdbID }) => {
         fetchRating();
     }, [imdbID]);
 
-    const handleRatingChange = async (newRating) => {
-        const result = await Swal.fire({
-            title: `Le vas a dar ${newRating} estrellas a la película`,
-            text: '¿Estás seguro de guardar esta calificación?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar'
-        });
+    const handleRatingChange = (newRating) => {
+        setPendingRating(newRating);
+        setIsConfirmModalOpen(true);
+    };
 
-        if (result.isConfirmed) {
-            try {
-                const res = await axios.post(
-                    'http://localhost:3000/user/rating',
-                    {
-                        imdbID,
-                        nota: newRating,
-                        fecha: new Date().toISOString()
-                    },
-                    { withCredentials: true }
-                );
+    const handleConfirmRating = async (confirmedRating) => {
+        try {
+            const res = await axios.post(
+                'http://localhost:3000/user/rating',
+                {
+                    imdbID,
+                    nota: confirmedRating,
+                    fecha: new Date().toISOString()
+                },
+                { withCredentials: true }
+            );
 
-                setRating(newRating);
-                Swal.fire('¡Guardado!', 'Tu calificación ha sido registrada.', 'success');
+            setRating(confirmedRating);
+            setIsConfirmModalOpen(false);
 
-                if (res.data.nuevasInsignias && res.data.nuevasInsignias.length > 0) {
-                    res.data.nuevasInsignias.forEach((badge) => {
-                        Swal.fire({
-                            title: `🎉 ¡Nueva insignia desbloqueada!`,
-                            text: `${badge.nombre}: ${badge.descripcion}`,
-                            imageUrl: `/images/badges/${badge.id}.png`,
-                            imageHeight: 100,
-                            confirmButtonText: '¡Genial!'
-                        });
+            // Opcional: feedback visual
+            Toast.fire({ icon: 'success', title: 'Calificación guardada' });
+
+            if (res.data.nuevasInsignias?.length > 0) {
+                res.data.nuevasInsignias.forEach((badge) => {
+                    Swal.fire({
+                        title: `🎉 ¡Nueva insignia desbloqueada!`,
+                        text: `${badge.nombre}: ${badge.descripcion}`,
+                        imageUrl: `/images/badges/${badge.id}.png`,
+                        imageHeight: 100,
+                        confirmButtonText: '¡Genial!'
                     });
-                }
-
-            } catch (err) {
-                Swal.fire('❌ Error', 'No se pudo guardar la calificación.', 'error');
+                });
             }
+
+        } catch (err) {
+            Toast.fire({ icon: 'error', title: 'No se pudo guardar la calificación' });
         }
     };
 
     const toggleWatchlist = async () => {
         try {
-            const res = await axios.post('http://localhost:3000/user/watchlist', {
-                imdbID
-            }, { withCredentials: true });
-
-            setWatchlisted(res.data.watchlist.includes(imdbID));
+          const res = await axios.post('http://localhost:3000/user/watchlist', {
+            imdbID
+          }, { withCredentials: true });
+      
+          setWatchlisted(res.data.watchlist.includes(imdbID));
         } catch (err) {
-            console.error('Error al actualizar watchlist:', err);
+          console.error('Error al actualizar watchlist:', err);
         }
-    };
+      };
+      
+
 
     return (
-        <div className="p-4 rounded-lg shadow-md border mt-4">
-            <h2 className="text-xl font-semibold mb-2">Tu interacción</h2>
+        <div className="user-interaction-panel">
+            <h2 className="interaction-title">Tu interacción</h2>
 
-            <div className="mb-4">
-                <p className="mb-1">¿Qué nota le das a esta película?</p>
-                <ReactStars
-                    count={5}
-                    size={30}
-                    value={rating}
-                    onChange={handleRatingChange}
-                    half={false}
-                    color2={'#ffd700'}
-                />
+            <div className="interaction-block">
+                <p className="interaction-label">¿Qué nota le das a esta película?</p>
+                <div className="stars-container">
+                    <ReactStars
+                        count={5}
+                        size={30}
+                        value={rating}
+                        onChange={handleRatingChange}
+                        half={true}
+                        color2={'#ffd700'}
+                    />
+                </div>
             </div>
 
-            <div className="flex items-center cursor-pointer" onClick={toggleWatchlist}>
-                {watchlisted ? <Eye className="text-green-600 mr-2" /> : <EyeOff className="text-gray-500 mr-2" />}
-                <span>{watchlisted ? 'En tu watchlist' : 'Añadir a la watchlist'}</span>
+            <div className="watchlist-toggle" onClick={toggleWatchlist}>
+                {watchlisted ? (
+                    <Eye className="icon eye" />
+                ) : (
+                    <EyeOff className="icon eye-off" />
+                )}
+                <span className="watchlist-text">
+                    {watchlisted ? 'En tu watchlist' : 'Añadir a la watchlist'}
+                </span>
             </div>
+
+            <ConfirmRatingModal
+                isOpen={isConfirmModalOpen}
+                newRating={pendingRating}
+                onConfirm={handleConfirmRating}
+                onCancel={() => setIsConfirmModalOpen(false)}
+            />
+
         </div>
+
+
     );
 };
 

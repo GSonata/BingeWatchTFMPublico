@@ -1,4 +1,8 @@
 const nodemailer = require('nodemailer');
+const crypto = require('crypto'); 
+const bcrypt = require('bcrypt'); 
+const User = require('../models/User');
+
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -39,4 +43,68 @@ const sendMail = async (req, res) => {
   }
 };
 
-module.exports = { sendMail };
+// Solicitar recuperación de contraseña
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'No hay ningún usuario con ese email.' });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpires = Date.now() + 3600000; // 1 hora
+    await user.save();
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+    await transporter.sendMail({
+      to: email,
+      subject: '🔐 Recuperación de contraseña',
+      html: `
+        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>Este enlace expirará en 1 hora.</p>
+      `
+    });
+
+    res.status(200).json({ message: 'Correo de recuperación enviado.' });
+  } catch (error) {
+    console.error('Error al enviar correo de recuperación:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
+// Restablecer contraseña
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Token inválido o expirado.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+  } catch (error) {
+    console.error('Error al restablecer la contraseña:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
+module.exports = {
+  sendMail,
+  requestPasswordReset,
+  resetPassword
+};

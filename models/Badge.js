@@ -17,6 +17,25 @@ const badgeSchema = new mongoose.Schema({
   imagen: {
     type: String,
     required: true 
+  },
+  esMensual: {
+    type: Boolean,
+    default: false
+  },
+  tipo: {
+    type: String,
+    enum: ['vista', 'coleccion', 'watchlist'],
+    default: 'vista'
+  },
+  objetivo: {
+    type: Number,
+    default: 10 
+  },
+  mes: {
+    type: Number 
+  },
+  año: {
+    type: Number
   }
 });
 

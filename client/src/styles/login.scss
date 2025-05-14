@@ -1,0 +1,281 @@
+@import './variables.css';
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  background: url('../../public/images/login-background.jpg') center/cover no-repeat;
+  padding: var(--padding-large) var(--padding-medium);
+  color: var(--text-color);
+  font-family: var(--font-family);
+
+  .login-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--padding-medium);
+
+    img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+      animation: bounceLight 3s ease-in-out infinite;
+    }
+
+    h1 {
+      font-size: var(--font-size-xl);
+      color: var(--text-color);
+      margin: 0;
+      font-weight: bold;
+    }
+  }
+
+  .login-title {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--padding-medium);
+    color: var(--text-color);
+    font-style: italic;
+    animation: fadeInUp 0.5s ease;
+  }
+
+  .login-container {
+    background-color: rgba(20, 20, 20, 0.95);
+    padding: 3rem 2.5rem;
+    border-radius: var(--border-radius-xl);
+    box-shadow: 0 0 15px var(--shadow-medium);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
+
+    h2 {
+      margin-bottom: var(--padding-medium);
+      font-size: var(--font-size-lg);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      padding: var(--padding-small);
+      width: 100%;
+      border: 1px solid var(--gray-dark);
+      background-color: var(--gray-almost-black);
+      color: var(--text-color);
+      border-radius: var(--border-radius);
+      box-shadow: inset 2px 2px 6px #00000040, inset -2px -2px 6px #2e2e2e40;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+      font-size: var(--font-size-base);
+    }
+
+    input:focus {
+      outline: none;
+      border: 1px solid var(--blue);
+      box-shadow: 0 0 5px var(--blue),
+        inset 2px 2px 6px #00000040,
+        inset -2px -2px 6px #2e2e2e40;
+    }
+
+    button {
+      background-color: var(--blue);
+      color: var(--text-color);
+      border: none;
+      padding: 12px 25px;
+      border-radius: var(--border-radius-button);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      font-size: var(--font-size-sm);
+    }
+
+    button:hover {
+      background-color: var(--green);
+    }
+
+    .divider {
+      border-top: 1px solid var(--gray-medium);
+      margin: 2rem 0;
+    }
+
+    .register-link {
+      color: var(--text-color);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color var(--transition);
+      margin-top: 0.5rem;
+
+      &:hover {
+        color: var(--blue-soft-dark);
+      }
+    }
+
+    .error-message {
+      color: var(--red-soft);
+      margin: 10px 0;
+    }
+
+    .google-login-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background-color: var(--white);
+      color: var(--gray-black);
+      padding: 10px;
+      width: 100%;
+      max-width: 300px;
+      margin: 15px auto 0;
+      border-radius: var(--border-radius-button);
+      border: 1px solid var(--gray-medium);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      font-weight: bold;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        background-color: var(--gray-white);
+      }
+    }
+  }
+}
+
+.back-to-home {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    transition: transform 0.3s ease, color 0.3s ease;
+
+    img {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.3s ease;
+      transform: rotate(90deg);
+    }
+
+    &:hover {
+      transform: translateX(-5px);
+      color: var(--blue-soft);
+
+      img {
+        filter: hue-rotate(90deg);
+        transform: translateX(-3px);
+        transform: rotate(450deg);
+      }
+    }
+  }
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal-content {
+    padding: var(--padding-large);
+    border-radius: var(--border-radius-xl);
+    width: 100%;
+    max-width: 500px;
+    animation: fadeInUp 0.4s ease;
+  }
+
+  .secondary {
+    margin-top: var(--padding-small);
+    background: transparent;
+    border: 1px solid var(--gray-medium);
+    color: var(--text-color);
+    padding: 8px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--blue-soft-dark);
+      color: var(--blue-soft-dark);
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceLight {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+      padding: 2rem 1.5rem;
+      max-width: 90%;
+    }
+  
+    .login-branding img {
+      width: 60px;
+      animation: none !important;    }
+  
+    .login-branding h1 {
+      font-size: var(--font-size-lg);
+      text-align: center;
+    }
+  
+    .login-title {
+      font-size: var(--font-size-base);
+      text-align: center;
+      margin-bottom: var(--padding-small);
+    }
+  
+    .google-login-button {
+      max-width: 100%;
+      font-size: var(--font-size-sm);
+    }
+  
+    .modal-content {
+      max-width: 90%;
+      padding: 1.5rem;
+    }
+  
+    .secondary {
+      width: 100%;
+      padding: 0.75rem;
+    }
+  }
+  

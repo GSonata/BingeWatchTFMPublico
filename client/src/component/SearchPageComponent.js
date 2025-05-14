@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilm, faUser, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import SearchInputComponent from './SearchInputComponent';
-import '../styles/SearchPageComponent.css';
+import '../styles/SearchPageComponent.scss';
+
+import BannerComponent from "./Subcomponentes/BannerComponent"
+import FooterComponent from "./Subcomponentes/FooterComponent"
 
 const SearchPageComponent = () => {
     const location = useLocation();
@@ -12,6 +16,7 @@ const SearchPageComponent = () => {
     const [movies, setMovies] = useState([]);
     const [users, setUsers] = useState([]);
     const [activeTab, setActiveTab] = useState('peliculas');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -27,6 +32,7 @@ const SearchPageComponent = () => {
     }, [location.search]);
 
     const searchEverything = async (term) => {
+        setIsLoading(true);
         try {
             const [movieRes, userRes] = await Promise.all([
                 axios.post('http://localhost:3000/movies', { title: term }, { withCredentials: true }),
@@ -39,6 +45,8 @@ const SearchPageComponent = () => {
             console.error('❌ Error en la búsqueda:', err.message);
             setMovies([]);
             setUsers([]);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -49,94 +57,122 @@ const SearchPageComponent = () => {
     const handleUserClick = (userId) => {
         navigate(`/friend/${userId}`);
     };
-    
+
 
     return (
-        <div className="search-page">
-            <div className="search-input-wrapper">
-                <SearchInputComponent />
-            </div>
+        <>
+            <BannerComponent />
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="spinner"></div>
+                    <p>Cargando resultados...</p>
+                </div>
+            )}
+            <div className="search-page">
 
-            <h2>🔍 A ver que encontramos en: <em>{query}</em></h2>
+                <h2>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} /> A ver que encontramos en: <em>{query}</em>
+                </h2>
+                <p>Recuerda, nuestra base de datos SOLO busca nombres de las peliculas en inglés por ahora.</p>
+                <div className="tabs">
+                    <button
+                        className={activeTab === 'peliculas' ? 'active' : ''}
+                        onClick={() => setActiveTab('peliculas')}
+                    >
+                        <FontAwesomeIcon icon={faFilm} /> Películas ({movies.length})
+                    </button>
 
-            <div className="tabs">
-                <button
-                    className={activeTab === 'peliculas' ? 'active' : ''}
-                    onClick={() => setActiveTab('peliculas')}
-                >
-                    🎬 Películas ({movies.length})
-                </button>
-                <button
-                    className={activeTab === 'usuarios' ? 'active' : ''}
-                    onClick={() => setActiveTab('usuarios')}
-                >
-                    👤 Usuarios ({users.length})
-                </button>
-            </div>
+                    <button
+                        className={activeTab === 'usuarios' ? 'active' : ''}
+                        onClick={() => setActiveTab('usuarios')}
+                    >
+                        <FontAwesomeIcon icon={faUser} /> Usuarios ({users.length})
+                    </button>
+                </div>
 
-            <div className="tab-content">
-                {activeTab === 'peliculas' && (
-                    <div className="movie-results">
-                        {movies.length === 0 && <p>No se encontraron películas.</p>}
-                        {movies.map((movie) => (
-                            <div
-                                key={movie.imdbID}
-                                className="search-card"
-                                onClick={() => handleMovieClick(movie.imdbID)}
-                            >
-                                <img src={movie.poster} alt={movie.title} width="80" />
-                                <div>
-                                    <h4>{movie.title} ({movie.year})</h4>
-                                    <p>{movie.plot}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {activeTab === 'usuarios' && (
-                    <div className="user-results">
-                        {users.length === 0 && <p>No se encontraron usuarios.</p>}
-                        {users.map((user) => (
-                            <div
-                                key={user._id}
-                                className="search-card"
-                                onClick={() => handleUserClick(user._id)}
-                            >
-                                {user.imagenPerfil && user.imagenPerfil.startsWith('data:image') ? (
-                                    <img
-                                        src={user.imagenPerfil}
-                                        alt="perfil"
-                                        width="60"
-                                        height="60"
-                                        style={{ borderRadius: '50%', objectFit: 'cover' }}
-                                    />
-                                ) : (
-                                    <div
-                                        style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            borderRadius: '50%',
-                                            backgroundColor: 'var(--gray-medium)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '1.2rem',
-                                            color: 'var(--text-color)',
-                                        }}
-                                    >
-                                        👤
+                <div className="tab-content">
+                    {activeTab === 'peliculas' && (
+                        <div className="movie-results">
+                            {movies.length === 0 && (
+                                <div className="no-results">
+                                    <img src="/images/no-find.png" alt="Sin resultados" className="no-results-logo" />
+                                    <h3>Sin resultados</h3>
+                                    <p>Recuerda, nuestra base de datos SOLO busca nombres de las peliculas en inglés por ahora.</p>
                                     </div>
-                                )}
-                                <div>
-                                    <h4>@{user.alias}</h4>
+                            )}
+                            {movies.map((movie) => (
+                                <div
+                                    key={movie.imdbID}
+                                    className="search-card"
+                                    onClick={() => handleMovieClick(movie.imdbID)}
+                                >
+                                    <img src={movie.poster} alt={movie.title} width="80" />
+                                    <div>
+                                        <h4>{movie.title} ({movie.year})</h4>
+                                        <p>{movie.plot}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === 'usuarios' && (
+                        <div className="user-results">
+                            {users.length === 0 && <p>No se encontraron usuarios.</p>}
+                            {users.map((user) => {
+                                let imagenBase64 = null;
+
+                                if (user.imagenPerfil) {
+                                    // Si no empieza por "data:image", añadimos el encabezado
+                                    imagenBase64 = user.imagenPerfil.startsWith('data:image')
+                                        ? user.imagenPerfil
+                                        : `data:image/jpeg;base64,${user.imagenPerfil}`;
+                                }
+
+                                return (
+                                    <div
+                                        key={user._id}
+                                        className="search-card"
+                                        onClick={() => handleUserClick(user._id)}
+                                    >
+                                        {imagenBase64 ? (
+                                            <img
+                                                src={imagenBase64}
+                                                alt="perfil"
+                                                width="60"
+                                                height="60"
+                                                style={{ borderRadius: '50%', objectFit: 'cover' }}
+                                            />
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: 'var(--gray-medium)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '1.2rem',
+                                                    color: 'var(--text-color)',
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faUser} />
+                                            </div>
+                                        )}
+                                        <div>
+                                            <h4>@{user.alias}</h4>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+            <FooterComponent />
+        </>
     );
 };
 

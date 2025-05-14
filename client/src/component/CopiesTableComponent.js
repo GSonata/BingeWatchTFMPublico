@@ -1,45 +1,51 @@
 import React from 'react';
+import "../styles/CopiesTable.scss"
 
-function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy }) {
+
+function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy, setIsAddModalOpen }) {
     return (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }} border="1" cellPadding="8">
-            <thead>
-                <tr>
-                    <th>Fecha añadida</th>
-                    <th>Plataforma</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {copias.length > 0 ? (
-                    copias.map((copia, index) => (
-                        <tr key={index}>
-                            <td>  {copia.fechaAñadida
-                                ? new Date(copia.fechaAñadida).toLocaleDateString()
-                                : 'Fecha no disponible'}</td>
-                            <td>{copia.soporte}</td>
-                            <td>{copia.estado}</td>
-                            <td>
-                            <button onClick={() => onEditCopy(copia)}>✏️</button>                              
-                            <button onClick={() => onDeleteCopy(copia.idCopia)}>🗑️</button>
+        <div className="copies-table-wrapper">
+            <table className="copies-table">
+                <thead>
+                    <tr>
+                        <th>Fecha añadida</th>
+                        <th>Plataforma</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {copias.length > 0 ? (
+                        copias.map((copia, index) => (
+                            <tr key={index}>
+                                <td>
+                                    {copia.fechaAñadida
+                                        ? new Date(copia.fechaAñadida).toLocaleDateString()
+                                        : 'Fecha no disponible'}
+                                </td>
+                                <td>{copia.soporte}</td>
+                                <td>{copia.estado}</td>
+                                <td className='action-group'>
+                                    <button className="edit-btn" onClick={() => onEditCopy(copia)}>✏️</button>
+                                    <button className="delete-btn" onClick={() => onDeleteCopy(copia.idCopia)}>🗑️</button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="4" className="empty-message">
+                                No tienes ninguna copia de esta película.
                             </td>
                         </tr>
-                    ))
-                ) : (
+                    )}
                     <tr>
-                        <td colSpan="4" style={{ textAlign: 'center', fontStyle: 'italic' }}>
-                            No tienes ninguna copia de esta película.
+                        <td colSpan="4" className="add-row">
+                            <button className="add-btn" onClick={() => setIsAddModalOpen(true)}>➕ Añadir una copia</button>
                         </td>
                     </tr>
-                )}
-                <tr>
-                    <td colSpan="4" style={{ textAlign: 'center' }}>
-                        <button onClick={onAddCopy}>➕ Añadir una copia</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     );
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import MainPageComponent from './component/MainPageComponent';
 import SearchPageComponent from './component/SearchPageComponent';
 import MovieDetailComponent from './component/MovieDetailComponent';
@@ -11,8 +11,11 @@ import axios from 'axios';
 import UserPageComponent from './component/UserPageComponent';
 import FriendPageComponent from './component/FriendPageComponent';
 import FriendActivityComponent from './component/FriendActivityComponent';
+import ResetPasswordPageComponent from './component/ResetPasswordPageComponent';
 import ContactPage from './component/ContactPage';
+import "./App.scss";
 
+// Ruta privada: solo accede si está autenticado
 const PrivateRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
 
@@ -21,8 +24,17 @@ const PrivateRoute = ({ children }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
+// Ruta pública: solo accede si NO está autenticado
+const PublicRoute = ({ children }) => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) return <p></p>;
+
+    return !isAuthenticated ? children : <Navigate to="/user" />;
+};
+
 function App() {
-    const { isAuthenticated, setIsAuthenticated, logout } = useAuth();
+    const { setIsAuthenticated, logout } = useAuth();
 
     const handleLogout = async () => {
         try {
@@ -36,25 +48,29 @@ function App() {
 
     return (
         <Router>
-            <nav>
-                <Link to="/">Inicio</Link>
-                {!isAuthenticated && <Link to="/login">Iniciar Sesión</Link>}
-                {!isAuthenticated && <Link to="/register">Registrarse</Link>}
-                {isAuthenticated && <Link to="/search">Buscar Películas</Link>}
-                {isAuthenticated && <Link to="/user">Perfil de Usuario</Link>}
-                {isAuthenticated && (
-                    <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Cerrar Sesión</button>
-                )}
-            </nav>
-
             <Routes>
+                {/* Rutas públicas */}
                 <Route path="/" element={<MainPageComponent />} />
-                <Route path="/login" element={<LoginComponent />} />
-                <Route path="/register" element={<RegisterComponent />} />
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <LoginComponent />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <RegisterComponent />
+                        </PublicRoute>
+                    }
+                />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPageComponent />} />
 
-
-                {/* LAS RUTAS MARCADAS CON PRIVATE ROUTE SON PRIVADAS*/}
+                {/* Rutas privadas */}
                 <Route
                     path="/search"
                     element={
@@ -79,15 +95,14 @@ function App() {
                         </PrivateRoute>
                     }
                 />
-
-                <Route path="/friend/:userId"
+                <Route
+                    path="/friend/:userId"
                     element={
                         <PrivateRoute>
                             <FriendPageComponent />
                         </PrivateRoute>
-                    } />
-
-
+                    }
+                />
                 <Route
                     path="/collection"
                     element={
@@ -96,7 +111,6 @@ function App() {
                         </PrivateRoute>
                     }
                 />
-
                 <Route
                     path="/friend-activity"
                     element={
@@ -105,7 +119,6 @@ function App() {
                         </PrivateRoute>
                     }
                 />
-
             </Routes>
         </Router>
     );

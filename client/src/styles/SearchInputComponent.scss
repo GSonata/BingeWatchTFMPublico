@@ -1,0 +1,30 @@
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+
+
+    input {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.5rem;
+        font-size: var(--font-size-base);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-light);
+        background-color: var(--background-light);
+        color: var(--text-color);
+        transition: border-color var(--transition);
+    }
+
+    input:focus {
+        border-color: var(--blue);
+        outline: none;
+    }
+
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        color: var(--gray-light);
+        font-size: 1rem;
+    }
+}

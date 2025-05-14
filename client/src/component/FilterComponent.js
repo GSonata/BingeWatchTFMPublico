@@ -1,4 +1,14 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faSliders,
+    faMagnifyingGlass,
+    faFilm,
+    faCompactDisc,
+    faMasksTheater,
+    faSort,
+    faXmark
+} from '@fortawesome/free-solid-svg-icons';
 
 const FilterComponent = ({
     filters,
@@ -31,10 +41,11 @@ const FilterComponent = ({
 
     return (
         <aside className="filters-panel">
-            <h3>🎛️ Filtros</h3>
+            <h3><FontAwesomeIcon icon={faSliders} /> Filtros</h3>
+
             <input
                 type="text"
-                placeholder="🔍 Buscar por nombre"
+                placeholder="Buscar por nombre"
                 name="nombre"
                 value={filters.nombre}
                 onChange={onFilterChange}
@@ -42,7 +53,7 @@ const FilterComponent = ({
 
             {activeTab === 'coleccion' && (
                 <>
-                    <label>🎞️ Estado</label>
+                    <label><FontAwesomeIcon icon={faFilm} /> Estado</label>
                     <select name="estado" value={filters.estado} onChange={onFilterChange}>
                         <option>Todos</option>
                         {availableEstados.map((estado, index) => (
@@ -50,7 +61,7 @@ const FilterComponent = ({
                         ))}
                     </select>
 
-                    <label>💿 Plataforma</label>
+                    <label><FontAwesomeIcon icon={faCompactDisc} /> Plataforma</label>
                     <select name="plataforma" value={filters.plataforma} onChange={onFilterChange}>
                         <option>Todas</option>
                         {availableSoportes.map((soporte, index) => (
@@ -60,7 +71,7 @@ const FilterComponent = ({
                 </>
             )}
 
-            <label>🎭 Género</label>
+            <label><FontAwesomeIcon icon={faMasksTheater} /> Género</label>
             <select name="genero" value={filters.genero} onChange={onFilterChange}>
                 <option>Todos</option>
                 {availableGenres.map((genero, index) => (
@@ -68,12 +79,12 @@ const FilterComponent = ({
                 ))}
             </select>
 
-            <label>📌 Ordenar por</label>
+            <label><FontAwesomeIcon icon={faSort} /> Ordenar por</label>
             <select name="orden" value={filters.orden} onChange={onFilterChange}>
-                <option value="fecha_asc">📅 Fecha de adición ↑</option>
-                <option value="fecha_desc">📅 Fecha de adición ↓</option>
-                <option value="año_asc">🎬 Año de la película ↑</option>
-                <option value="año_desc">🎬 Año de la película ↓</option>
+                <option value="fecha_asc">Fecha de adición ↑</option>
+                <option value="fecha_desc">Fecha de adición ↓</option>
+                <option value="año_asc">Año de la película ↑</option>
+                <option value="año_desc">Año de la película ↓</option>
             </select>
 
             {Object.entries(filters).some(
@@ -84,11 +95,7 @@ const FilterComponent = ({
                         if (!value || value === defaultValues[key]) return null;
 
                         let label = prettyLabels[key] || key;
-                        let displayValue = value;
-
-                        if (key === 'orden' && prettyOrdenLabels?.[value]) {
-                            displayValue = prettyOrdenLabels[value];
-                        }
+                        let displayValue = prettyOrdenLabels?.[value] || value;
 
                         return (
                             <span key={key} className="filter-chip">
@@ -103,7 +110,7 @@ const FilterComponent = ({
                                         })
                                     }
                                 >
-                                    ❌
+                                    <FontAwesomeIcon icon={faXmark} />
                                 </button>
                             </span>
                         );

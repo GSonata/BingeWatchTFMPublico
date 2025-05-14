@@ -1,0 +1,191 @@
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  background: linear-gradient(to bottom, var(--gray-white), var(--white));
+  border-bottom: 5px solid var(--gray-black);
+  color: var(--gray-black);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
+  z-index: 5;
+  min-height: 120px;
+
+  .banner-left {
+    display: flex;
+    align-items: center;
+    justify-content: c;
+    gap: 1rem;
+
+    .banner-logo-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .banner-logo-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .banner-logo {
+        width: 40px;
+      }
+
+      .banner-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0;
+
+        .banner-W {
+          color: var(--blue-dark);
+        }
+      }
+    }
+
+    input {
+      height: 40px;
+      padding: 0 1rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--gray-medium-light);
+      border-radius: var(--border-radius-button);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--gray-black);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(4px);
+      width: 100%;
+      max-width: 400px;
+
+      &::placeholder {
+        color: var(--gray-medium);
+        opacity: 0.8;
+        font-size: var(--font-size-base);
+      }
+
+      &:focus {
+        background: var(--gray-white);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1); // soft blue glow
+        outline: none;
+      }
+    }
+  }
+
+    .banner-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .banner-avatar-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .banner-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      cursor: pointer;
+    }
+
+    .default-avatar {
+      font-size: 1.5rem;
+      color: #bbb;
+    }
+
+    .banner-user-alias {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--gray-black);
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: 60px;
+      right: 40px;
+      background-color: var(--gray-white);
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+      z-index: 10;
+      min-width: 160px;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin: 0.5rem 0;
+
+          a {
+            color: var(--gray-black);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: var(--gray-light);
+            }
+          }
+
+          .logout-button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--red-soft);
+            color: var(--white);
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: var(--red);
+            }
+          }
+        }
+      }
+    }
+
+    .scroll-to-banner-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--gray-black);
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-size: var(--font-size-sm);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      transform: rotate(180deg);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, transform 0.3s ease, visibility 0s linear 0.5s;
+
+      &:hover {
+        background-color: var(--blue-soft);
+      }
+
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+        transition: opacity 0.5s ease, transform 0.3s ease;
+      }
+    }
+  }

@@ -1,0 +1,113 @@
+.mail-component {
+    max-width: 75%;
+    margin: 4rem auto 0rem auto;
+    padding: var(--padding-large);
+    font-family: var(--font-family);
+    border-radius: var(--border-radius-xl);
+    transition: var(--transition);
+    color: var(--gray-black);
+  
+    h3 {
+      font-size: var(--font-size-xl);
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--gray-black);
+    }
+  
+    h2 {
+      font-size: var(--font-size-base);
+      font-weight: normal;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--gray-darker);
+      line-height: 1.6;
+      padding: 0 1rem;
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+  
+      label {
+        font-weight: bold;
+        color: var(--gray-darker);
+        font-size: var(--font-size-base);
+      }
+  
+      input,
+      textarea {
+        font-size: var(--font-size-base);
+        padding: var(--padding-small);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--gray-medium-light);
+        background-color: var(--gray-white);
+        color: var(--gray-black);
+        resize: vertical;
+        transition: border 0.3s ease;
+  
+        &:focus {
+          border-color: var(--brown-main);
+          outline: none;
+        }
+      }
+  
+      textarea {
+        min-height: 120px;
+      }
+  
+      button {
+        align-self: flex-end;
+        padding: 0.7rem 1.5rem;
+        font-size: var(--font-size-base);
+        font-weight: bold;
+        color: #000;
+        background-color: var(--brown-main);
+        border: none;
+        border-radius: var(--border-radius-button);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: var(--brown-accent);
+          color: var(--white);
+        }
+      }
+    }
+
+    .required-star {
+        color: red;
+        margin-left: 0.25rem;
+      }
+      
+      button .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-top-color: #000;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+      }
+      
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .introCard {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+      
+      .introCard.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+  }
+  

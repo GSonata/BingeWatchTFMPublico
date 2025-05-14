@@ -22,7 +22,7 @@ const badgeSchema = new mongoose.Schema({
 const watchlistEntrySchema = new mongoose.Schema({
     imdbID: { type: String, required: true },
     fechaAñadida: { type: Date, default: Date.now }
-}); 
+});
 
 const userSchema = new mongoose.Schema({
     user: { type: String, required: true, unique: true }, // nombre de login
@@ -34,8 +34,9 @@ const userSchema = new mongoose.Schema({
     watchlist: [watchlistEntrySchema],
     peliculasVistas: [watchedMovieSchema],
     insignias: [badgeSchema],
-    amigos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
-
+    amigos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    resetToken: { type: String },
+    resetTokenExpires: { type: Date }
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { animate } from 'animejs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import '../styles/UserBadgesComponent.css';
+import '../styles/UserBadgesComponent.scss';
 import AllBadgesModal from './AllBadgesModal';
 
 const UserBadgesComponent = ({ userId }) => {
@@ -58,10 +58,15 @@ const UserBadgesComponent = ({ userId }) => {
 
     return (
         <div className="badges-container">
-            <h3>🏆 Insignias obtenidas</h3>
-            <button onClick={() => setShowModal(true)} className="view-all-badges-btn">
-                Ver todas las insignias
-            </button>
+            <div className='badges-info'>
+                <h3>🏆 Insignias obtenidas</h3>
+                {!userId && (
+                    <button onClick={() => setShowModal(true)} className="view-all-badges-btn">
+                        Ver todas las insignias
+                    </button>
+                )}
+
+            </div>
             {showModal && <AllBadgesModal onClose={() => setShowModal(false)} />}
             <div className="badges-bar">
                 {badges.map((badge, index) => (

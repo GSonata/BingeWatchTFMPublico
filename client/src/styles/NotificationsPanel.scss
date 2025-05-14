@@ -1,0 +1,142 @@
+.notifications-panel-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .accordion-header {
+    background-color: var(--gray-darker);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color var(--transition);
+  }
+  
+  .accordion-header:hover {
+    background-color: var(--gray-dark);
+  }
+  
+  .accordion-content {
+    display: none;
+    background-color: var(--gray-almost-black);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    font-size: var(--font-size-sm);
+    color: var(--gray-light);
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: var(--box-shadow-soft);
+  }
+  
+  .accordion-content.active {
+    display: block;
+  }
+  
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--gray-darker);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.75rem;
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.05);
+    border-left: 3px solid transparent;
+    transition: background-color 0.3s ease;
+  }
+  
+  .notif-item.like {
+    border-left-color: var(--blue-soft);
+  }
+  
+  .notif-item.comment {
+    border-left-color: var(--yellow);
+  }
+  
+  .notif-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .notif-placeholder-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--gray-medium-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 1.2rem;
+  }
+  
+  .notif-content {
+    flex: 1;
+  }
+  
+  .notif-alias {
+    font-weight: bold;
+    color: var(--blue-soft);
+    text-decoration: none;
+  }
+  
+  .notif-action,
+  .notif-title {
+    margin-top: 0.2rem;
+    color: var(--gray-light);
+    font-size: 0.85rem;
+  }
+  
+  .badge-notif {
+    font-weight: bold;
+    color: var(--white);
+  }
+  
+  .notif-comment {
+    font-style: italic;
+    color: var(--gray-light);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  
+  .notif-date {
+    font-size: 0.75rem;
+    color: var(--gray-medium);
+    margin-top: 0.5rem;
+  }
+  
+  .notif-delete-button {
+    background: none;
+    border: none;
+    color: var(--gray-light);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    align-self: flex-start;
+    transition: transform 0.2s, color 0.2s;
+  }
+  
+  .notif-delete-button:hover {
+    color: var(--red);
+    transform: scale(1.1);
+  }
+  
+  .notif-count-bubble {
+    background-color: var(--red);
+    color: var(--white);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    margin-left: 0.5rem;
+  }
+  

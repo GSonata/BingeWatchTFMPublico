@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserMovieTabs from './UserMovieTabs';
 import FilterComponent from './FilterComponent';
-import "../styles/UserCollectionPages.css";
+import "../styles/UserCollectionPages.scss";
+import BannerComponent from './Subcomponentes/BannerComponent';
+import FooterComponent from './Subcomponentes/FooterComponent';
 
 const UserCollectionPage = () => {
     const [history, setHistory] = useState({
@@ -152,28 +154,33 @@ const UserCollectionPage = () => {
     };
 
     return (
-        <div className="user-collection-page">
-            <FilterComponent
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                onClearFilters={handleClearFilters}
-                availableGenres={availableGenres}
-                availableEstados={availableEstados}
-                availableSoportes={availableSoportes}
-                activeTab={activeTab}
-                prettyOrdenLabels={prettyOrdenLabels}
-            />
-
-            <main className="content-panel">
-                <UserMovieTabs
-                    coleccion={filteredCollection}
-                    peliculasVistas={filteredVistas}
-                    watchlist={filteredWatchlist}
+        <>
+            <BannerComponent />
+            <div className="user-collection-page">
+                <FilterComponent
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    onClearFilters={handleClearFilters}
+                    availableGenres={availableGenres}
+                    availableEstados={availableEstados}
+                    availableSoportes={availableSoportes}
                     activeTab={activeTab}
-                    setActiveTab={setActiveTab}
+                    prettyOrdenLabels={prettyOrdenLabels}
                 />
-            </main>
-        </div>
+
+                <main className="content-panel">
+                    <h1>Tu colección</h1>
+                    <UserMovieTabs
+                        coleccion={filteredCollection}
+                        peliculasVistas={filteredVistas}
+                        watchlist={filteredWatchlist}
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                    />
+                </main>
+            </div>
+            <FooterComponent />
+        </>
     );
 };
 

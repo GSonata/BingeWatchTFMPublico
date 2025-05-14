@@ -4,7 +4,10 @@ import Swal from 'sweetalert2';
 import { animate } from 'animejs';
 import FeedPostComponent from './FeedPostComponent.js';
 import NotificationsPanelComponent from './NotificationsPanelComponent';
-import '../styles/FriendActivity.css';
+import BannerComponent from "./Subcomponentes/BannerComponent.js"
+import FooterComponent from "./Subcomponentes/FooterComponent.js"
+
+import '../styles/FriendActivity.scss';
 
 const FriendActivityComponent = () => {
     const [activity, setActivity] = useState([]);
@@ -13,6 +16,8 @@ const FriendActivityComponent = () => {
     const [commentsMap, setCommentsMap] = useState({});
     const [commentInputs, setCommentInputs] = useState({});
     const [userData, setUserData] = useState(null);
+    const [monthlyBadge, setMonthlyBadge] = useState(null);
+
     const feedRef = useRef(null);
 
     useEffect(() => {
@@ -84,40 +89,68 @@ const FriendActivityComponent = () => {
     }, [activity, visibleItems]);
 
 
+    useEffect(() => {
+        const fetchMonthlyBadge = async () => {
+            try {
+                const res = await axios.get('http://localhost:3000/badge/monthly', {
+                    withCredentials: true
+                });
+                if (res.data) setMonthlyBadge(res.data);
+            } catch (err) {
+                console.error('❌ Error al cargar la insignia del mes:', err.message);
+            }
+        };
+
+        fetchMonthlyBadge();
+    }, []);
+
+
     return (
-        <div className="friend-activity-container">
+        <>
+            <BannerComponent />
+            <div className="friend-activity-container">
+                <div className="feed-column">
+                    <h1>¿Qué hacen tus amigos?</h1>
 
-            <NotificationsPanelComponent />
+                    {activity.slice(0, visibleItems).map((item) => (
+                        <FeedPostComponent
+                            key={`${item.userId}-${item.imdbID}-${item.date}`}
+                            item={item}
+                            userData={userData}
+                            animate={animate}
+                            commentsMap={commentsMap}
+                            setCommentsMap={setCommentsMap}
+                            commentInputs={commentInputs}
+                            setCommentInputs={setCommentInputs}
+                            setActivity={setActivity}
+                        />
+                    ))}
 
-            <div className="feed-column">
-                <h1>¿Qué hacen tus amigos?</h1>
-
-                {activity.slice(0, visibleItems).map((item) => (
-                    <FeedPostComponent
-                        key={`${item.userId}-${item.imdbID}-${item.date}`}
-                        item={item}
-                        userData={userData}
-                        animate={animate}
-                        commentsMap={commentsMap}
-                        setCommentsMap={setCommentsMap}
-                        commentInputs={commentInputs}
-                        setCommentInputs={setCommentInputs}
-                        setActivity={setActivity}
-                    />
-                ))}
-
-                <div ref={feedRef} className="scroll-sentinel" />
-            </div>
-
-            <div className="side-column">
-                <div className="filter-panel">
-                    Opciones de filtro {/* Por implementar */}
+                    <div ref={feedRef} className="scroll-sentinel" />
                 </div>
-                <div className="badge-info">
-                    Información de Badges {/* Por implementar */}
+
+                <div className="side-column">
+                    <NotificationsPanelComponent />
+
+                    {monthlyBadge && (
+                        <div className="badge-monthly-progress">
+                            <div className="badge-monthly-title">Progreso de la insignia del mes</div>
+                            <div className="badge-progress-bar">
+                                <div
+                                    className="badge-progress-fill"
+                                    style={{ width: `${monthlyBadge.progreso}%` }}
+                                ></div>
+                            </div>
+                            <div className="badge-monthly-stats">
+                                Has visto {Math.min(Math.round((monthlyBadge.progreso / 100) * monthlyBadge.objetivo), monthlyBadge.objetivo)} de {monthlyBadge.objetivo} películas este mes
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
-        </div>
+            <FooterComponent />
+        </>
     );
 };
 

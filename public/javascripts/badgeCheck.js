@@ -1,4 +1,5 @@
 module.exports = {
+
     // ✅ Ver 10 películas en marzo
     check_reto_marzo: (user) => {
         const now = new Date();
@@ -50,6 +51,87 @@ module.exports = {
             console.log('✅ Usuario cumple para reto_abril');
             return {
                 idInsignia: 'reto_abril',
+                fechaAdquisicion: new Date()
+            };
+        }
+
+        console.log('ℹ️ Usuario no cumple o ya tiene la insignia.');
+        return null;
+    },
+
+    // ✅ Ver 10 películas en mayo
+    check_reto_mayo: (user) => {
+        const now = new Date();
+        console.log('🔎 Comprobando reto_mayo...');
+        if (now.getMonth() !== 4) { 
+            console.log('❌ No es mayo, no se puede cumplir el reto.');
+            return null;
+        }
+
+        const vistasMayo = user.peliculasVistas.filter(peli => {
+            const date = new Date(peli.fechaVisualizacion);
+            return date.getMonth() === 4;
+        });
+
+        const alreadyHas = user.insignias.some(b => b.idInsignia === 'reto_mayo');
+        if (vistasMayo.length >= 10 && !alreadyHas) {
+            console.log('✅ Usuario cumple para reto_mayo');
+            return {
+                idInsignia: 'reto_mayo',
+                fechaAdquisicion: new Date()
+            };
+        }
+
+        console.log('ℹ️ Usuario no cumple o ya tiene la insignia.');
+        return null;
+    },
+
+    // ✅ Ver 10 películas en junio
+    check_reto_junio: (user) => {
+        const now = new Date();
+        console.log('🔎 Comprobando reto_junio...');
+        if (now.getMonth() !== 5) { 
+            console.log('❌ No es junio, no se puede cumplir el reto.');
+            return null;
+        }
+
+        const vistasJunio = user.peliculasVistas.filter(peli => {
+            const date = new Date(peli.fechaVisualizacion);
+            return date.getMonth() === 5;
+        });
+
+        const alreadyHas = user.insignias.some(b => b.idInsignia === 'reto_junio');
+        if (vistasJunio.length >= 10 && !alreadyHas) {
+            console.log('✅ Usuario cumple para reto_junio');
+            return {
+                idInsignia: 'reto_junio',
+                fechaAdquisicion: new Date()
+            };
+        }
+
+        console.log('ℹ️ Usuario no cumple o ya tiene la insignia.');
+        return null;
+    },
+
+    // ✅ Ver 10 películas en julio
+    check_reto_julio: (user) => {
+        const now = new Date();
+        console.log('🔎 Comprobando reto_julio...');
+        if (now.getMonth() !== 6) { 
+            console.log('❌ No es julio, no se puede cumplir el reto.');
+            return null;
+        }
+
+        const vistasJulio = user.peliculasVistas.filter(peli => {
+            const date = new Date(peli.fechaVisualizacion);
+            return date.getMonth() === 6;
+        });
+
+        const alreadyHas = user.insignias.some(b => b.idInsignia === 'reto_julio');
+        if (vistasJulio.length >= 10 && !alreadyHas) {
+            console.log('✅ Usuario cumple para reto_julio');
+            return {
+                idInsignia: 'reto_julio',
                 fechaAdquisicion: new Date()
             };
         }
@@ -151,5 +233,36 @@ module.exports = {
             return { idInsignia: 'reto_lowRate', fechaAdquisicion: new Date() };
         }
         return null;
+    },
+
+    check_conclave: (user) => {
+        console.log('🔎 Comprobando conclave...');
+
+        const CONCLAVE_IMDB_ID = 'tt20215234';
+        const CONCLAVE_RELEASE_DATE = new Date('2025-05-25');
+
+        const vistaConclave = user.peliculasVistas.find(p => p.imdbID === CONCLAVE_IMDB_ID);
+        if (!vistaConclave) {
+            console.log('ℹ️ El usuario no ha visto "Conclave".');
+            return null;
+        }
+
+        const fechaVista = new Date(vistaConclave.fechaVisualizacion);
+        const diffInDays = Math.floor((fechaVista - CONCLAVE_RELEASE_DATE) / (1000 * 60 * 60 * 24));
+
+        console.log(`📅 Días desde el estreno hasta visualización: ${diffInDays}`);
+
+        const alreadyHas = user.insignias.some(b => b.idInsignia === 'conclave');
+        if (diffInDays >= 7 && !alreadyHas) {
+            console.log('✅ Usuario cumple para insignia "conclave"');
+            return {
+                idInsignia: 'conclave',
+                fechaAdquisicion: new Date()
+            };
+        }
+
+        console.log('ℹ️ No cumple condiciones o ya tiene la insignia.');
+        return null;
     }
+
 };

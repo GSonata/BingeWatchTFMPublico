@@ -1,11 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import "../styles/UserHistoryComponent.css";
+import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import "../styles/UserHistoryComponent.scss";
 
 const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
     const [postersMap, setPostersMap] = useState({});
     const [activeTab, setActiveTab] = useState('coleccion');
+
+
+    const renderStars = (nota) => {
+        const stars = [];
+        const fullStars = Math.floor(nota);
+        const hasHalfStar = nota % 1 >= 0.25 && nota % 1 < 0.75;
+      
+        for (let i = 0; i < fullStars; i++) {
+          stars.push(<FaStar key={`star-full-${i}`} color="#3b9ded" />);
+        }
+      
+        if (hasHalfStar) {
+          stars.push(<FaStarHalfAlt key="star-half" color="#3b9ded" />);
+        }
+      
+        return <div className="stars">{stars}</div>;
+      };
+    
+
 
     useEffect(() => {
         const fetchPosters = async () => {
@@ -40,20 +60,21 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
 
     const renderVistasGrid = () => (
         <div className="movie-grid">
-            {peliculasVistas.map((vista, idx) => {
+            {peliculasVistas.map((vista) => {
                 const data = postersMap[vista.imdbID];
-                const estrellas = '⭐'.repeat(Math.round(vista.nota)); 
                 return data ? (
                     <Link to={`/movies/${vista.imdbID}`} key={vista.imdbID} className="movie-card">
                         <img src={data.poster} alt={data.title} />
                         <h4>{vista.title} ({vista.año})</h4>
-                        <p>{estrellas}</p>
-                        <p>{new Date(vista.fechaVisualizacion).toLocaleDateString()}</p>                    </Link>
+                        {renderStars(vista.nota)}
+                        <p>{new Date(vista.fechaVisualizacion).toLocaleDateString()}</p>
+                    </Link>
                 ) : null;
             })}
         </div>
     );
-    
+
+
 
     const renderWatchlistGrid = () => (
         <div className="movie-grid">

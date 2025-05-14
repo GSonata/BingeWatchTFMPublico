@@ -1,5 +1,9 @@
 const Movie = require('../models/Movie');
 
+const normalizeString = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
 const getMovies = async (req, res) => {
     const searchQuery = req.body.title;
 
@@ -11,7 +15,14 @@ const getMovies = async (req, res) => {
             return res.status(400).json({ message: "El título de la búsqueda es obligatorio" });
         }
 
-        let dbMovies = await Movie.find({ title: new RegExp(searchQuery, 'i') });
+        const normalizedQuery = normalizeString(searchQuery);
+
+
+        const allMovies = await Movie.find();
+        let dbMovies = allMovies.filter(movie =>
+            normalizeString(movie.title).toLowerCase().includes(normalizedQuery.toLowerCase())
+        ).sort((a, b) => b.metascore - a.metascore); // orden descendente de las notas
+    
         console.log(`📦 Películas encontradas en MongoDB: ${dbMovies.length}`);
 
         if (dbMovies.length > 0) {
@@ -51,7 +62,12 @@ const getMovies = async (req, res) => {
 
             const movieDetails = await movieDetailsResponse.json();
 
-            if (movieDetails.Type !== "movie") {
+            if (
+                movieDetails.Type !== "movie" || 
+                !movieDetails.Poster || 
+                movieDetails.Poster === "N/A" || 
+                movieDetails.Poster.trim() === ""
+            ){
                 console.log(`⏭️ Ignorando tipo no "movie": ${movieDetails.Type}`);
                 continue;
             }
@@ -84,8 +100,12 @@ const getMovies = async (req, res) => {
 
         if (savedMovies.length > 0) {
             console.log("📥 Nuevas películas guardadas. Recargando desde MongoDB...");
-            dbMovies = await Movie.find({ title: new RegExp(searchQuery, 'i') }).sort({ title: 1 });
+            const updatedMovies = await Movie.find();
+            dbMovies = updatedMovies.filter(movie =>
+                normalizeString(movie.title).toLowerCase().includes(normalizedQuery.toLowerCase())
+            );
         }
+        
 
         res.json(dbMovies);
 
