@@ -5,12 +5,12 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-
+    const baseURL = process.env.REACT_APP_API_URL
 
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const response = await fetch('http://localhost:3000/auth/check-session', {
+                const response = await fetch(`${baseURL}/auth/check-session`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
