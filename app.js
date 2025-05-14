@@ -35,13 +35,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+if (isProduction) {
+  app.set('trust proxy', 1); 
+}
+
 app.use(session({
   secret: "78789689689790789689689798789",
   saveUninitialized: true,
   resave: true,
   cookie: {
-    secure: isProduction, // true en producción, false en desarrollo
-    sameSite: isProduction ? 'none' : 'lax' // 'none' permite cookies entre dominios
+    secure: isProduction, 
+    sameSite: isProduction ? 'none' : 'lax' 
   }
 }));
 
