@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import '../../styles/mail.scss';
 
@@ -6,6 +6,8 @@ const MailComponent = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+
+  const baseUrl = process.env.REACT_APP_API_URL;
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -27,10 +29,11 @@ const MailComponent = () => {
     setIsSending(true);
 
     try {
-      const response = await fetch('/contact/send', {
+      console.log('📬 Enviando mensaje a:', `${baseUrl}/contact/send`);
+      const response = await fetch(`${baseUrl}/contact/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, message })
+        body: JSON.stringify({ email, message }),
       });
 
       const result = await response.json();
@@ -61,6 +64,7 @@ const MailComponent = () => {
         });
       }
     } catch (error) {
+      console.error('❌ Error de red:', error);
       Swal.fire({
         icon: 'error',
         title: '🚫 Error',
