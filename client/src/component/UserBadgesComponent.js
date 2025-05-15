@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { animate } from 'animejs';
+import { FaTrophy } from 'react-icons/fa';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import '../styles/UserBadgesComponent.scss';
@@ -61,15 +62,21 @@ const UserBadgesComponent = ({ userId }) => {
     return (
         <div className="badges-container">
             <div className='badges-info'>
-                <h3>🏆 Insignias obtenidas</h3>
+                <h3><FaTrophy style={{ marginRight: '0.5rem' }} /> Insignias obtenidas</h3>
                 {!userId && (
                     <button onClick={() => setShowModal(true)} className="view-all-badges-btn">
                         Ver todas las insignias
                     </button>
                 )}
             </div>
+
             {showModal && <AllBadgesModal onClose={() => setShowModal(false)} />}
+
             <div className="badges-bar">
+                {badges.length === 0 && (
+                    <p className="no-badges-msg">¡Empieza a coleccionar!</p>
+                )}
+
                 {badges.map((badge, index) => (
                     <div
                         key={badge.id || index}

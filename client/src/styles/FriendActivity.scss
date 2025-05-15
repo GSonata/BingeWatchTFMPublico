@@ -5,8 +5,20 @@
     padding: var(--padding-large);
     gap: 2rem;
     color: var(--text-color);
+    min-height: 100vh;
   }
   
+  .empty-activity-placeholder {
+    text-align: center;
+    margin-top: 3rem;
+    opacity: 0.8;
+}
+
+.empty-activity-placeholder img {
+    max-width: 200px;
+    margin-bottom: 1rem;
+}
+
   /* Columna izquierda */
   .feed-column {
     flex: 1;

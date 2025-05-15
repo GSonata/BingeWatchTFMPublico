@@ -9,6 +9,37 @@
   min-height: 100vh;
 }
 
+.empty-placeholder {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+  opacity: 0.9;
+  pointer-events: none;
+
+  img {
+    max-width: 160px;
+    margin-bottom: 1rem;
+    filter: grayscale(0.8);
+  }
+
+  p {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--gray-light);
+  }
+}
+
+.collection-wrapper {
+  position: relative;
+  min-height: 600px; // garantiza espacio para la posición absoluta del placeholder
+}
+
 /* === PANEL DE FILTROS === */
 .filters-panel {
   width: 350px;

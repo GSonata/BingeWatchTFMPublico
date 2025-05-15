@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import {
+    FaStar,
+    FaStarHalfAlt,
+    FaFolderOpen,
+    FaEye,
+    FaBookmark,
+    FaCompactDisc
+} from 'react-icons/fa';
 import "../styles/UserHistoryComponent.scss";
 
 const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
@@ -86,6 +93,21 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
         </div>
     );
 
+    const renderColeccionGrid = () => (
+        <div className="movie-grid">
+            {coleccion.map((pelicula) => (
+                <Link to={`/movies/${pelicula.imdbID}`} key={pelicula.imdbID} className="movie-card">
+                    <img src={pelicula.poster} alt={pelicula.title} />
+                    <h4>{pelicula.title} ({pelicula.año})</h4>
+                    <p className="copias-info">
+                        <FaCompactDisc style={{ marginRight: '0.3rem' }} />
+                        {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}
+                    </p>
+                </Link>
+            ))}
+        </div>
+    );
+
     return (
         <div className="user-history-tabs">
             <div className="tabs">
@@ -93,34 +115,24 @@ const UserHistoryComponent = ({ coleccion, peliculasVistas, watchlist }) => {
                     className={activeTab === 'coleccion' ? 'active' : ''}
                     onClick={() => setActiveTab('coleccion')}
                 >
-                    🎬 Colección
+                    <FaFolderOpen style={{ marginRight: '0.4rem' }} /> Colección
                 </button>
                 <button
                     className={activeTab === 'vistas' ? 'active' : ''}
                     onClick={() => setActiveTab('vistas')}
                 >
-                    👁️ Vistas
+                    <FaEye style={{ marginRight: '0.4rem' }} /> Vistas
                 </button>
                 <button
                     className={activeTab === 'watchlist' ? 'active' : ''}
                     onClick={() => setActiveTab('watchlist')}
                 >
-                    📌 Watchlist
+                    <FaBookmark style={{ marginRight: '0.4rem' }} /> Watchlist
                 </button>
             </div>
 
             <div className="tab-content">
-                {activeTab === 'coleccion' && (
-                    <div className="movie-grid">
-                        {coleccion.map((pelicula) => (
-                            <Link to={`/movies/${pelicula.imdbID}`} key={pelicula.imdbID} className="movie-card">
-                                <img src={pelicula.poster} alt={pelicula.title} />
-                                <h4>{pelicula.title} ({pelicula.año})</h4>
-                                <p>🎞️ {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}</p>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                {activeTab === 'coleccion' && renderColeccionGrid()}
                 {activeTab === 'vistas' && renderVistasGrid()}
                 {activeTab === 'watchlist' && renderWatchlistGrid()}
             </div>

@@ -162,7 +162,7 @@ const FeedPostComponent = ({
                                         ? 'ha VISTO la película:'
                                         : item.type === 'coleccion'
                                             ? 'ha AÑADIDO a su colección:'
-                                            : 'ha GUARDADO en su Watchlist:'}
+                                            : 'ha AÑADIDO a su Watchlist:'}
                                 </p>
                                 <h3>
                                     {item.title} <span className="year">({item.year})</span>

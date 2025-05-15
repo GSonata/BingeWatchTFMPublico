@@ -1,7 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { animate } from 'animejs';
-import { FaStar, FaStarHalfAlt, FaFilm, FaEye, FaBookmark } from 'react-icons/fa';
+import {
+    FaStar,
+    FaStarHalfAlt,
+    FaFilm,
+    FaEye,
+    FaBookmark,
+    FaCompactDisc
+} from 'react-icons/fa';
 
 const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setActiveTab }) => {
     useEffect(() => {
@@ -47,42 +54,61 @@ const UserMovieTabs = ({ coleccion, peliculasVistas, watchlist, activeTab, setAc
         return <div className="stars">{stars}</div>;
     };
 
+    const renderPlaceholder = (message) => (
+        <div className="empty-placeholder">
+            <img src="/images/bw-logo-white.png" alt="Vacío" />
+            <p>{message}</p>
+        </div>
+    );
+
     const renderColeccion = () => (
-        <div className="cards-grid">
-            {coleccion.map((pelicula) => (
-                <Link to={`/movies/${pelicula.imdbID}`} key={pelicula.imdbID} className="card" onClick={handleBounce}>
-                    <img src={pelicula.poster} alt={pelicula.title} className="poster" />
-                    <div className="title">{pelicula.title} ({pelicula.año})</div>
-                    <div className="copias">🎞️ {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}</div>
-                </Link>
-            ))}
+        <div className="collection-wrapper">
+            {coleccion.length === 0 && renderPlaceholder("Aún no tienes ninguna película en tu colección.")}
+            <div className="cards-grid">
+                {coleccion.map((pelicula) => (
+                    <Link to={`/movies/${pelicula.imdbID}`} key={pelicula.imdbID} className="card" onClick={handleBounce}>
+                        <img src={pelicula.poster} alt={pelicula.title} className="poster" />
+                        <div className="title">{pelicula.title} ({pelicula.año})</div>
+                        <div className="copias">
+                            <FaCompactDisc style={{ marginRight: '0.3rem' }} />
+                            {pelicula.numCopias} copia{pelicula.numCopias > 1 ? 's' : ''}
+                        </div>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 
     const renderVistas = () => (
-        <div className="cards-grid">
-            {peliculasVistas.map((vista) => (
-                <Link to={`/movies/${vista.imdbID}`} key={vista.imdbID} className="card" onClick={handleBounce}>
-                    <img src={vista.poster} alt={vista.title} className="poster" />
-                    <div className="title">{vista.title} ({vista.año})</div>
-                    <div className="vistas-info">
-                        {renderStars(vista.nota)}
-                        <span className='fechaVisualizacion'>{new Date(vista.fechaVisualizacion).toLocaleDateString()}</span>
-                    </div>
-                </Link>
-            ))}
+        <div className="collection-wrapper">
+            {peliculasVistas.length === 0 && renderPlaceholder("Todavía no has marcado ninguna película como vista.")}
+            <div className="cards-grid">
+                {peliculasVistas.map((vista) => (
+                    <Link to={`/movies/${vista.imdbID}`} key={vista.imdbID} className="card" onClick={handleBounce}>
+                        <img src={vista.poster} alt={vista.title} className="poster" />
+                        <div className="title">{vista.title} ({vista.año})</div>
+                        <div className="vistas-info">
+                            {renderStars(vista.nota)}
+                            <span className='fechaVisualizacion'>{new Date(vista.fechaVisualizacion).toLocaleDateString()}</span>
+                        </div>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 
     const renderWatchlist = () => (
-        <div className="cards-grid">
-            {watchlist.map((peli) => (
-                <Link to={`/movies/${peli.imdbID}`} key={peli.imdbID} className="card" onClick={handleBounce}>
-                    <img src={peli.poster} alt={peli.title} className="poster" />
-                    <div className="title">{peli.title} ({peli.año})</div>
-                    <div className="copias">En tu lista</div>
-                </Link>
-            ))}
+        <div className="collection-wrapper">
+            {watchlist.length === 0 && renderPlaceholder("Tu lista de películas por ver está vacía.")}
+            <div className="cards-grid">
+                {watchlist.map((peli) => (
+                    <Link to={`/movies/${peli.imdbID}`} key={peli.imdbID} className="card" onClick={handleBounce}>
+                        <img src={peli.poster} alt={peli.title} className="poster" />
+                        <div className="title">{peli.title} ({peli.año})</div>
+                        <div className="copias">En tu lista</div>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 

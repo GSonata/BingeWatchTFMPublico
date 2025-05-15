@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useParams } from 'react-router-dom';
+import { FaBox, FaEye, FaBookOpen } from 'react-icons/fa';
 import UserHistoryComponent from './UserHistoryComponent';
 import UserBadgesComponent from './UserBadgesComponent';
 import FooterComponent from './Subcomponentes/FooterComponent';
@@ -18,6 +19,7 @@ const FriendPageComponent = () => {
     });
     const [isFriend, setIsFriend] = useState(false);
     const [hover, setHover] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); 
 
     useEffect(() => {
         const fetchFriendData = async () => {
@@ -34,6 +36,8 @@ const FriendPageComponent = () => {
                 setIsFriend(friendRes.data.isFriend);
             } catch (err) {
                 console.error('❌ Error al obtener datos del amigo:', err.message);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -77,63 +81,74 @@ const FriendPageComponent = () => {
         }
     };
 
-    if (!userData) return <p>Cargando perfil...</p>;
-
     return (
         <>
-            <BannerComponent />
-            <div className="user-page-container">
-                <div className="user-top-section">
-                    <div className="user-header">
-                        <div className="user-profile-img-container">
-                            {userData.imagenPerfil && (
-                                <img
-                                    src={`data:image/jpeg;base64,${userData.imagenPerfil}`}
-                                    alt="Perfil"
-                                    className="user-profile-img"
-                                />
-                            )}
-                        </div>
-                        <div className="user-info">
-                            <div className="user-info-header">
-                                <span className="username">@{userData.alias}</span>
-                                <button
-                                    className={`friend-button ${isFriend ? 'added' : ''}`}
-                                    onClick={toggleFriend}
-                                    onMouseEnter={() => setHover(true)}
-                                    onMouseLeave={() => setHover(false)}
-                                >
-                                    {isFriend ? (hover ? 'Dejar de seguir' : 'Siguiendo') : '➕ Seguir'}
-                                </button>
-                            </div>
-                            <div className="user-stats-box">
-                                <div className="stat">
-                                    <p>📦</p>
-                                    <div className="label">Colección</div>
-                                    <div className="value">{history.coleccion.length}</div>
-                                </div>
-                                <div className="divider"></div>
-                                <div className="stat">
-                                    <p>👁️</p>
-                                    <div className="label">Vistas</div>
-                                    <div className="value">{history.peliculasVistas.length}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <UserBadgesComponent userId={userId} />
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="spinner"></div>
+                    <p>Cargando perfil...</p>
                 </div>
+            )}
+            {!isLoading && (
+                <>
+                    <BannerComponent />
+                    <div className="user-page-container">
+                        <div className="user-top-section">
+                            <div className="user-header">
+                                <div className="user-profile-img-container">
+                                    {userData.imagenPerfil && (
+                                        <img
+                                            src={`data:image/jpeg;base64,${userData.imagenPerfil}`}
+                                            alt="Perfil"
+                                            className="user-profile-img"
+                                        />
+                                    )}
+                                </div>
+                                <div className="user-info">
+                                    <div className="user-info-header">
+                                        <span className="username">@{userData.alias}</span>
+                                        <button
+                                            className={`friend-button ${isFriend ? 'added' : ''}`}
+                                            onClick={toggleFriend}
+                                            onMouseEnter={() => setHover(true)}
+                                            onMouseLeave={() => setHover(false)}
+                                        >
+                                            {isFriend ? (hover ? 'Dejar de seguir' : 'Siguiendo') : '➕ Seguir'}
+                                        </button>
+                                    </div>
+                                    <div className="user-stats-box">
+                                        <div className="stat">
+                                            <FaBox />
+                                            <div className="label">Colección</div>
+                                            <div className="value">{history.coleccion.length}</div>
+                                        </div>
+                                        <div className="divider"></div>
+                                        <div className="stat">
+                                            <FaEye />
+                                            <div className="label">Vistas</div>
+                                            <div className="value">{history.peliculasVistas.length}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <h2 className="history-title">📚 Historial de actividad</h2>
+                            <UserBadgesComponent userId={userId} />
+                        </div>
 
-                <UserHistoryComponent
-                    coleccion={history.coleccion}
-                    peliculasVistas={history.peliculasVistas}
-                    watchlist={history.watchlist}
-                />
-            </div>
-            <FooterComponent />
+                        <h2 className="history-title">
+                            <FaBookOpen style={{ marginRight: '0.5rem' }} />
+                            Historial de actividad
+                        </h2>
+
+                        <UserHistoryComponent
+                            coleccion={history.coleccion}
+                            peliculasVistas={history.peliculasVistas}
+                            watchlist={history.watchlist}
+                        />
+                    </div>
+                    <FooterComponent />
+                </>
+            )}
         </>
     );
 };

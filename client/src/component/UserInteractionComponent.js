@@ -21,24 +21,36 @@ const UserInteractionComponent = ({ imdbID }) => {
     const [watchlisted, setWatchlisted] = useState(false);
     const [pendingRating, setPendingRating] = useState(null);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const baseUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
-        const fetchRating = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
             try {
-                const res = await axios.get(`${baseUrl}/user/rating/${imdbID}`, {
-                    withCredentials: true
-                });
-                if (res.data.nota) {
-                    setRating(res.data.nota);
+                const [ratingRes, watchlistRes] = await Promise.all([
+                    axios.get(`${baseUrl}/user/rating/${imdbID}`, {
+                        withCredentials: true
+                    }),
+                    axios.get(`${baseUrl}/user/watchlist`, {
+                        withCredentials: true
+                    })
+                ]);
+
+                if (ratingRes.data.nota) {
+                    setRating(ratingRes.data.nota);
                 }
+
+                setWatchlisted(watchlistRes.data.watchlist.includes(imdbID));
             } catch (err) {
-                console.error('Error al obtener calificación:', err.message);
+                console.error('Error al obtener datos de usuario:', err.message);
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        fetchRating();
+        fetchData();
     }, [imdbID, baseUrl]);
 
     const handleRatingChange = (newRating) => {
@@ -93,41 +105,51 @@ const UserInteractionComponent = ({ imdbID }) => {
     };
 
     return (
-        <div className="user-interaction-panel">
-            <h2 className="interaction-title">Tu interacción</h2>
+        <>
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="spinner"></div>
+                    <p>Cargando datos...</p>
+                </div>
+            )}
+            {!isLoading && (
+                <div className="user-interaction-panel">
+                    <h2 className="interaction-title">Tu interacción</h2>
 
-            <div className="interaction-block">
-                <p className="interaction-label">¿Qué nota le das a esta película?</p>
-                <div className="stars-container">
-                    <ReactStars
-                        count={5}
-                        size={30}
-                        value={rating}
-                        onChange={handleRatingChange}
-                        half={true}
-                        color2={'#ffd700'}
+                    <div className="interaction-block">
+                        <p className="interaction-label">¿Qué nota le das a esta película?</p>
+                        <div className="stars-container">
+                            <ReactStars
+                                count={5}
+                                size={30}
+                                value={rating}
+                                onChange={handleRatingChange}
+                                half={true}
+                                color2={'#ffd700'}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="watchlist-toggle" onClick={toggleWatchlist}>
+                        {watchlisted ? (
+                            <Eye className="icon eye" />
+                        ) : (
+                            <EyeOff className="icon eye-off" />
+                        )}
+                        <span className="watchlist-text">
+                            {watchlisted ? 'En tu watchlist' : 'Añadir a la watchlist'}
+                        </span>
+                    </div>
+
+                    <ConfirmRatingModal
+                        isOpen={isConfirmModalOpen}
+                        newRating={pendingRating}
+                        onConfirm={handleConfirmRating}
+                        onCancel={() => setIsConfirmModalOpen(false)}
                     />
                 </div>
-            </div>
-
-            <div className="watchlist-toggle" onClick={toggleWatchlist}>
-                {watchlisted ? (
-                    <Eye className="icon eye" />
-                ) : (
-                    <EyeOff className="icon eye-off" />
-                )}
-                <span className="watchlist-text">
-                    {watchlisted ? 'En tu watchlist' : 'Añadir a la watchlist'}
-                </span>
-            </div>
-
-            <ConfirmRatingModal
-                isOpen={isConfirmModalOpen}
-                newRating={pendingRating}
-                onConfirm={handleConfirmRating}
-                onCancel={() => setIsConfirmModalOpen(false)}
-            />
-        </div>
+            )}
+        </>
     );
 };
 

@@ -15,11 +15,14 @@ function LoginComponent() {
   const [password, setPassword] = useState('');
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const baseUrl = process.env.REACT_APP_API_URL;
@@ -56,6 +59,8 @@ function LoginComponent() {
         timer: 3000,
         timerProgressBar: true
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,6 +94,7 @@ function LoginComponent() {
               value={user}
               onChange={(e) => setUser(e.target.value)}
               required
+              disabled={isLoading}
             />
             <input
               type="password"
@@ -96,25 +102,41 @@ function LoginComponent() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
 
-            <div className="register-link" onClick={() => setShowForgotPasswordModal(true)}>
+            <div
+              className="register-link"
+              onClick={() => !isLoading && setShowForgotPasswordModal(true)}
+            >
               ¿Olvidaste tu contraseña?
             </div>
 
-            <button type="submit">Iniciar Sesión</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            </button>
           </form>
 
           <div className="divider"></div>
 
-          <div className="register-link" onClick={() => setShowRegisterModal(true)}>
+          <div
+            className="register-link"
+            onClick={() => !isLoading && setShowRegisterModal(true)}
+          >
             ¿No tienes cuenta? Regístrate aquí
           </div>
         </div>
 
+        {isLoading && (
+          <div className="loading-modal">
+            <div className="spinner"></div>
+            <p>Iniciando sesión...</p>
+          </div>
+        )}
+
         {showRegisterModal && (
-          <div className="modal-overlay" onClick={() => setShowRegisterModal(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-overlay">
+            <div className="modal-content">
               <RegisterComponent onClose={() => setShowRegisterModal(false)} />
             </div>
           </div>

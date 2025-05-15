@@ -15,23 +15,32 @@ const getMovies = async (req, res) => {
             return res.status(400).json({ message: "El título de la búsqueda es obligatorio" });
         }
 
-        const normalizedQuery = normalizeString(searchQuery);
+        const normalizedQuery = normalizeString(searchQuery).toLowerCase();
 
-
+        // Obtener todas las películas desde MongoDB
         const allMovies = await Movie.find();
-        let dbMovies = allMovies.filter(movie =>
-            normalizeString(movie.title).toLowerCase().includes(normalizedQuery.toLowerCase())
-        ).sort((a, b) => b.metascore - a.metascore); // orden descendente de las notas
-    
-        console.log(`📦 Películas encontradas en MongoDB: ${dbMovies.length}`);
 
-        if (dbMovies.length > 0) {
-            console.log("✅ Devolviendo películas desde MongoDB");
-            return res.json(dbMovies);
+        // Buscar coincidencia exacta
+        const exactMatch = allMovies.find(
+            movie => normalizeString(movie.title).toLowerCase() === normalizedQuery
+        );
+
+        if (exactMatch) {
+            console.log("✅ Coincidencia exacta encontrada en MongoDB");
+            return res.json([exactMatch]);
         }
 
+        // Buscar coincidencias parciales (por si no hay exacta)
+        let dbMovies = allMovies.filter(movie =>
+            normalizeString(movie.title).toLowerCase().includes(normalizedQuery)
+        ).sort((a, b) => b.metascore - a.metascore);
+
+        console.log(`📦 Coincidencias parciales en MongoDB: ${dbMovies.length}`);
+        console.log("ℹ️ Consultando también la API externa para posibles coincidencias adicionales...");
+
+        // Llamada a la API externa (OMDb)
         const apiUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(searchQuery)}&apikey=b69b9800`;
-        console.log(`🌐 Fetching from OMDB API: ${apiUrl}`);
+        console.log(`🌐 Fetching from OMDb API: ${apiUrl}`);
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -41,10 +50,9 @@ const getMovies = async (req, res) => {
 
         const data = await response.json();
 
-        // ✅ Validación para evitar error si no hay resultados
         if (!data.Search || !Array.isArray(data.Search)) {
             console.log("ℹ️ No se encontraron resultados en la API externa");
-            return res.json([]);
+            return res.json(dbMovies); // devolver solo los parciales si no hay más
         }
 
         const moviesFromAPI = data.Search;
@@ -68,7 +76,7 @@ const getMovies = async (req, res) => {
                 movieDetails.Poster === "N/A" || 
                 movieDetails.Poster.trim() === ""
             ){
-                console.log(`⏭️ Ignorando tipo no "movie": ${movieDetails.Type}`);
+                console.log(`⏭️ Ignorando tipo no 'movie' o sin póster: ${movieDetails.Title}`);
                 continue;
             }
 
@@ -102,10 +110,9 @@ const getMovies = async (req, res) => {
             console.log("📥 Nuevas películas guardadas. Recargando desde MongoDB...");
             const updatedMovies = await Movie.find();
             dbMovies = updatedMovies.filter(movie =>
-                normalizeString(movie.title).toLowerCase().includes(normalizedQuery.toLowerCase())
-            );
+                normalizeString(movie.title).toLowerCase().includes(normalizedQuery)
+            ).sort((a, b) => b.metascore - a.metascore);
         }
-        
 
         res.json(dbMovies);
 
@@ -114,6 +121,7 @@ const getMovies = async (req, res) => {
         res.status(500).json({ message: "Error del servidor", error: err.message });
     }
 };
+
 
 const getMovieById = async (req, res) => {
     try {

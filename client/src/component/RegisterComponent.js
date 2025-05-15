@@ -14,6 +14,7 @@ function RegisterComponent({ onClose }) {
 
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -47,14 +48,16 @@ function RegisterComponent({ onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { user, email, alias, password, confirmPassword } = formData;
+        setIsLoading(true);
+        setError('');
 
+        const { user, email, alias, password, confirmPassword } = formData;
         const issues = checkPasswordRequirements(password, confirmPassword);
+
         if (Object.values(issues).some((v) => v)) {
             setError('La contraseña no cumple los requisitos.');
+            setIsLoading(false);
             return;
-        } else {
-            setError('');
         }
 
         try {
@@ -74,12 +77,13 @@ function RegisterComponent({ onClose }) {
                     password: '',
                     confirmPassword: ''
                 });
-                setError('');
                 if (onClose) onClose();
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Error al registrar el usuario.';
             setError(msg);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -93,26 +97,26 @@ function RegisterComponent({ onClose }) {
             <form onSubmit={handleSubmit}>
                 <div className="input-group">
                     <label htmlFor="user">Nombre de usuario (login) *</label>
-                    <input type="text" name="user" value={formData.user} onChange={handleChange} required />
+                    <input type="text" name="user" value={formData.user} onChange={handleChange} disabled={isLoading} required />
                 </div>
                 <div className="input-group">
                     <label htmlFor="email">Correo electrónico</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} disabled={isLoading} required />
                 </div>
                 <div className="input-group">
                     <label htmlFor="alias">Alias visible</label>
-                    <input type="text" name="alias" value={formData.alias} onChange={handleChange} required />
+                    <input type="text" name="alias" value={formData.alias} onChange={handleChange} disabled={isLoading} required />
                 </div>
                 <div className="input-group">
                     <label htmlFor="password">Contraseña</label>
-                    <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required />
+                    <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} disabled={isLoading} required />
                 </div>
                 <div className="input-group">
                     <label htmlFor="confirmPassword">Confirmar contraseña</label>
-                    <input type={showPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+                    <input type={showPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} disabled={isLoading} required />
                 </div>
                 <label className="checkbox-label">
-                    <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} />
+                    <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} disabled={isLoading} />
                     Mostrar contraseñas
                 </label>
                 <p className="note">
@@ -131,7 +135,9 @@ function RegisterComponent({ onClose }) {
                 )}
 
                 {error && <div className="error-message">{error}</div>}
-                <button type="submit" disabled={!isFormValid()}>Registrarse</button>
+                <button type="submit" disabled={!isFormValid() || isLoading}>
+                    {isLoading ? 'Registrando...' : 'Registrarse'}
+                </button>
             </form>
         </div>
     );

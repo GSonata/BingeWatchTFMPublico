@@ -13,6 +13,8 @@ const UserCollectionPage = () => {
         watchlist: []
     });
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const [filters, setFilters] = useState({
         nombre: '',
         estado: 'Todos',
@@ -36,6 +38,7 @@ const UserCollectionPage = () => {
 
     useEffect(() => {
         const fetchHistory = async () => {
+            setIsLoading(true);
             try {
                 const res = await axios.get(`${baseUrl}/user/history`, {
                     withCredentials: true
@@ -47,6 +50,8 @@ const UserCollectionPage = () => {
                 }
             } catch (err) {
                 console.error('❌ Error al obtener el historial del usuario:', err.message);
+            } finally {
+                setIsLoading(false); 
             }
         };
 
@@ -100,7 +105,6 @@ const UserCollectionPage = () => {
                 );
 
             const ordenadas = [...filtradas];
-
             const [tipoOrden, direccion] = (filters.orden || 'fecha_asc').split('_');
 
             ordenadas.sort((a, b) => {
@@ -157,31 +161,41 @@ const UserCollectionPage = () => {
 
     return (
         <>
-            <BannerComponent />
-            <div className="user-collection-page">
-                <FilterComponent
-                    filters={filters}
-                    onFilterChange={handleFilterChange}
-                    onClearFilters={handleClearFilters}
-                    availableGenres={availableGenres}
-                    availableEstados={availableEstados}
-                    availableSoportes={availableSoportes}
-                    activeTab={activeTab}
-                    prettyOrdenLabels={prettyOrdenLabels}
-                />
+            {isLoading && (
+                <div className="loading-modal">
+                    <div className="spinner"></div>
+                    <p>Cargando tu colección...</p>
+                </div>
+            )}
+            {!isLoading && (
+                <>
+                    <BannerComponent />
+                    <div className="user-collection-page">
+                        <FilterComponent
+                            filters={filters}
+                            onFilterChange={handleFilterChange}
+                            onClearFilters={handleClearFilters}
+                            availableGenres={availableGenres}
+                            availableEstados={availableEstados}
+                            availableSoportes={availableSoportes}
+                            activeTab={activeTab}
+                            prettyOrdenLabels={prettyOrdenLabels}
+                        />
 
-                <main className="content-panel">
-                    <h1>Tu colección</h1>
-                    <UserMovieTabs
-                        coleccion={filteredCollection}
-                        peliculasVistas={filteredVistas}
-                        watchlist={filteredWatchlist}
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
-                    />
-                </main>
-            </div>
-            <FooterComponent />
+                        <main className="content-panel">
+                            <h1>Tu colección</h1>
+                            <UserMovieTabs
+                                coleccion={filteredCollection}
+                                peliculasVistas={filteredVistas}
+                                watchlist={filteredWatchlist}
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                            />
+                        </main>
+                    </div>
+                    <FooterComponent />
+                </>
+            )}
         </>
     );
 };
