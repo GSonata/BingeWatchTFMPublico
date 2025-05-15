@@ -21,32 +21,26 @@ const UserInteractionComponent = ({ imdbID }) => {
     const [watchlisted, setWatchlisted] = useState(false);
     const [pendingRating, setPendingRating] = useState(null);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [isActionLoading, setIsActionLoading] = useState(false);
 
     const baseUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true);
+            setIsInitialLoading(true);
             try {
                 const [ratingRes, watchlistRes] = await Promise.all([
-                    axios.get(`${baseUrl}/user/rating/${imdbID}`, {
-                        withCredentials: true
-                    }),
-                    axios.get(`${baseUrl}/user/watchlist`, {
-                        withCredentials: true
-                    })
+                    axios.get(`${baseUrl}/user/rating/${imdbID}`, { withCredentials: true }),
+                    axios.get(`${baseUrl}/user/watchlist`, { withCredentials: true })
                 ]);
 
-                if (ratingRes.data.nota) {
-                    setRating(ratingRes.data.nota);
-                }
-
+                if (ratingRes.data.nota) setRating(ratingRes.data.nota);
                 setWatchlisted(watchlistRes.data.watchlist.includes(imdbID));
             } catch (err) {
                 console.error('Error al obtener datos de usuario:', err.message);
             } finally {
-                setIsLoading(false);
+                setIsInitialLoading(false);
             }
         };
 
@@ -59,6 +53,7 @@ const UserInteractionComponent = ({ imdbID }) => {
     };
 
     const handleConfirmRating = async (confirmedRating) => {
+        setIsActionLoading(true);
         try {
             const res = await axios.post(
                 `${baseUrl}/user/rating`,
@@ -72,7 +67,6 @@ const UserInteractionComponent = ({ imdbID }) => {
 
             setRating(confirmedRating);
             setIsConfirmModalOpen(false);
-
             Toast.fire({ icon: 'success', title: 'Calificación guardada' });
 
             if (res.data.nuevasInsignias?.length > 0) {
@@ -86,13 +80,15 @@ const UserInteractionComponent = ({ imdbID }) => {
                     });
                 });
             }
-
         } catch (err) {
             Toast.fire({ icon: 'error', title: 'No se pudo guardar la calificación' });
+        } finally {
+            setIsActionLoading(false);
         }
     };
 
     const toggleWatchlist = async () => {
+        setIsActionLoading(true);
         try {
             const res = await axios.post(`${baseUrl}/user/watchlist`, {
                 imdbID
@@ -101,18 +97,21 @@ const UserInteractionComponent = ({ imdbID }) => {
             setWatchlisted(res.data.watchlist.includes(imdbID));
         } catch (err) {
             console.error('Error al actualizar watchlist:', err);
+        } finally {
+            setIsActionLoading(false);
         }
     };
 
     return (
         <>
-            {isLoading && (
+            {(isInitialLoading || isActionLoading) && (
                 <div className="loading-modal">
                     <div className="spinner"></div>
-                    <p>Cargando datos...</p>
+                    <p>{isInitialLoading ? 'Cargando datos...' : 'Procesando...'}</p>
                 </div>
             )}
-            {!isLoading && (
+
+            {!isInitialLoading && !isActionLoading && (
                 <div className="user-interaction-panel">
                     <h2 className="interaction-title">Tu interacción</h2>
 
@@ -131,11 +130,7 @@ const UserInteractionComponent = ({ imdbID }) => {
                     </div>
 
                     <div className="watchlist-toggle" onClick={toggleWatchlist}>
-                        {watchlisted ? (
-                            <Eye className="icon eye" />
-                        ) : (
-                            <EyeOff className="icon eye-off" />
-                        )}
+                        {watchlisted ? <Eye className="icon eye" /> : <EyeOff className="icon eye-off" />}
                         <span className="watchlist-text">
                             {watchlisted ? 'En tu watchlist' : 'Añadir a la watchlist'}
                         </span>
