@@ -1,0 +1,29 @@
+.copy-details-modal {
+  padding: 2rem;
+
+  .copy-image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .tags-display {
+    margin-top: 1rem;
+
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: var(--gray-light, #eee);
+      border-radius: 12px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+    }
+  }
+}

@@ -32,47 +32,57 @@ const getUserCollectionByMovie = async (req, res) => {
 };
 
 const addCopyToCollection = async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ message: 'No autenticado' });
+  if (!req.session.user) return res.status(401).json({ message: 'No autenticado' });
 
-    const { imdbID, soporte, estado } = req.body;
-    if (!imdbID || !soporte || !estado) return res.status(400).json({ message: 'Faltan datos' });
+  const { imdbID, soporte, estado, foto = "", tags = [] } = req.body;
 
-    try {
-        const user = await User.findById(req.session.user._id);
-        const nuevaCopia = {
-            idCopia: uuidv4(),
-            imdbID,
-            soporte,
-            estado,
-            fechaAñadida: new Date()
-        };
+  if (!imdbID || !soporte || !estado) {
+    return res.status(400).json({ message: 'Faltan datos obligatorios' });
+  }
 
-        user.coleccion.push(nuevaCopia);
-        await user.save();
+  if (tags.length > 5) {
+    return res.status(400).json({ message: 'No puedes añadir más de 5 tags' });
+  }
 
-        await Interaction.create({
-            type: 'coleccion',
-            imdbID,
-            date: nuevaCopia.fechaAñadida,
-            userId: user._id,
-            soporte,
-            estado,
-            likes: [],
-            comments: []
-        });
+  try {
+    const user = await User.findById(req.session.user._id);
 
-        const nuevasInsignias = await checkAllBadges(user._id);
-        console.log('🆕 Nuevas insignias obtenidas:', nuevasInsignias.map(b => b.id));
+    const nuevaCopia = {
+      idCopia: uuidv4(),
+      imdbID,
+      soporte,
+      estado,
+      fechaAñadida: new Date(),
+      foto, // ✅ base64
+      tags  // ✅ array de strings
+    };
 
-        res.status(200).json({
-            message: 'Copia añadida correctamente',
-            copia: nuevaCopia,
-            nuevasInsignias
-        });
-    } catch (error) {
-        console.error('Error al añadir copia:', error);
-        res.status(500).json({ message: 'Error del servidor' });
-    }
+    user.coleccion.push(nuevaCopia);
+    await user.save();
+
+    await Interaction.create({
+      type: 'coleccion',
+      imdbID,
+      date: nuevaCopia.fechaAñadida,
+      userId: user._id,
+      soporte,
+      estado,
+      likes: [],
+      comments: []
+    });
+
+    const nuevasInsignias = await checkAllBadges(user._id);
+    console.log('🆕 Nuevas insignias obtenidas:', nuevasInsignias.map(b => b.id));
+
+    res.status(200).json({
+      message: 'Copia añadida correctamente',
+      copia: nuevaCopia,
+      nuevasInsignias
+    });
+  } catch (error) {
+    console.error('Error al añadir copia:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
 };
 
 const deleteCopyFromCollection = async (req, res) => {
@@ -104,29 +114,42 @@ const deleteCopyFromCollection = async (req, res) => {
 };
 
 const updateCopyFromCollection = async (req, res) => {
-    const { idCopia } = req.params;
-    const { soporte, estado } = req.body;
+  const { idCopia } = req.params;
+  const { soporte, estado, foto = "", tags = [] } = req.body;
 
-    if (!req.session.user) {
-        return res.status(401).json({ message: 'No autenticado' });
+  if (!req.session.user) {
+    return res.status(401).json({ message: 'No autenticado' });
+  }
+
+  if (tags.length > 5) {
+    return res.status(400).json({ message: 'No puedes añadir más de 5 tags' });
+  }
+
+  if (foto && !foto.startsWith("data:image/") && foto !== "") {
+    return res.status(400).json({ message: 'Formato de imagen no válido' });
+  }
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    const copia = user.coleccion.find(c => c.idCopia === idCopia);
+
+    if (!copia) {
+      return res.status(404).json({ message: 'Copia no encontrada' });
     }
 
-    try {
-        const user = await User.findById(req.session.user._id);
-        const copia = user.coleccion.find(c => c.idCopia === idCopia);
-
-        if (!copia) return res.status(404).json({ message: 'Copia no encontrada' });
-
-        copia.soporte = soporte;
-        copia.estado = estado;
-
-        await user.save();
-        res.status(200).json({ message: 'Copia actualizada correctamente', copia });
-    } catch (error) {
-        console.error('Error al actualizar copia:', error);
-        res.status(500).json({ message: 'Error del servidor' });
-    }
+    copia.soporte = soporte;
+    copia.estado = estado;
+    copia.foto = foto; 
+    copia.tags = tags;
+    
+    await user.save();
+    res.status(200).json({ message: 'Copia actualizada correctamente', copia });
+  } catch (error) {
+    console.error('Error al actualizar copia:', error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
 };
+
 
 /* FUNCIONES DE INTERACCION */
 
@@ -240,6 +263,19 @@ const toggleWatchlist = async (req, res) => {
         console.error('Error al actualizar watchlist:', error);
         res.status(500).json({ message: 'Error del servidor' });
     }
+};
+
+const getUserWatchlist = async (req, res) => {
+  if (!req.session.user) return res.status(401).json({ message: 'No autenticado' });
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    const imdbIDs = user.watchlist.map(entry => entry.imdbID);
+    res.status(200).json({ watchlist: imdbIDs });
+  } catch (err) {
+    console.error('Error al obtener watchlist:', err.message);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
 };
 
 /* FUNCIONES DE USUARIO AJENAS */
@@ -556,6 +592,7 @@ module.exports = {
     updateCopyFromCollection,
     addRating,
     toggleWatchlist,
+    getUserWatchlist,
     getUserRatingForMovie,
     getUserHistory,
     updateProfileImage,

@@ -32,7 +32,7 @@ const UserInteractionComponent = ({ imdbID }) => {
             try {
                 const [ratingRes, watchlistRes] = await Promise.all([
                     axios.get(`${baseUrl}/user/rating/${imdbID}`, { withCredentials: true }),
-                    axios.get(`${baseUrl}/user/watchlist`, { withCredentials: true })
+                    axios.get(`${baseUrl}/user/getwatchlist`, { withCredentials: true })
                 ]);
 
                 if (ratingRes.data.nota) setRating(ratingRes.data.nota);

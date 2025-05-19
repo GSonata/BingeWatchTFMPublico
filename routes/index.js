@@ -6,7 +6,7 @@ const {
   getUserCollectionByMovie, addCopyToCollection, deleteCopyFromCollection, updateCopyFromCollection, 
   addRating, toggleWatchlist, getUserRatingForMovie,
   getUserHistory, updateProfileImage, getUserBadges, updateAlias, searchUsers, getUserProfileById,
-  getUserHistoryById, getUserBadgesById
+  getUserHistoryById, getUserBadgesById, getUserWatchlist
 } = require('../controllers/userController');
 
 const {
@@ -61,6 +61,7 @@ router.get('/movies/:imdbID', getMovieById);
 //Rutas de interacción
 router.post('/user/rating', addRating);
 router.get('/user/rating/:imdbID', getUserRatingForMovie);
+router.get('/user/getwatchlist', getUserWatchlist);
 router.post('/user/watchlist', toggleWatchlist);
 router.put('/user/update-alias', updateAlias);
 

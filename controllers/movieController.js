@@ -4,6 +4,21 @@ const normalizeString = (str) => {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
+function titleSimilarity(a, b) {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+
+    let score = 0;
+    const minLen = 5;
+
+    for (let i = 0; i <= a.length - minLen; i++) {
+        const substr = a.slice(i, i + minLen);
+        if (b.includes(substr)) score++;
+    }
+
+    return score;
+}
+
 const getMovies = async (req, res) => {
     const searchQuery = req.body.title;
 
@@ -18,106 +33,81 @@ const getMovies = async (req, res) => {
         const normalizedQuery = normalizeString(searchQuery).toLowerCase();
 
         // Obtener todas las películas desde MongoDB
-        const allMovies = await Movie.find();
+        let dbMovies = await Movie.find();
 
-        // Buscar coincidencia exacta
-        const exactMatch = allMovies.find(
-            movie => normalizeString(movie.title).toLowerCase() === normalizedQuery
-        );
+        // Calcular similitud y filtrar aquellas con al menos 1 coincidencia
+        dbMovies = dbMovies
+            .map(movie => ({
+                ...movie.toObject(),
+                similarityScore: titleSimilarity(normalizeString(movie.title), normalizedQuery)
+            }))
+            .filter(movie => movie.similarityScore > 0)
+            .sort((a, b) => b.similarityScore - a.similarityScore);
 
-        if (exactMatch) {
-            console.log("✅ Coincidencia exacta encontrada en MongoDB");
-            return res.json([exactMatch]);
-        }
-
-        // Buscar coincidencias parciales (por si no hay exacta)
-        let dbMovies = allMovies.filter(movie =>
-            normalizeString(movie.title).toLowerCase().includes(normalizedQuery)
-        ).sort((a, b) => b.metascore - a.metascore);
-
-        console.log(`📦 Coincidencias parciales en MongoDB: ${dbMovies.length}`);
-        console.log("ℹ️ Consultando también la API externa para posibles coincidencias adicionales...");
+        console.log(`📦 Coincidencias por similitud: ${dbMovies.length}`);
+        console.log("ℹ️ Consultando también la API externa...");
 
         // Llamada a la API externa (OMDb)
         const apiUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(searchQuery)}&apikey=b69b9800`;
-        console.log(`🌐 Fetching from OMDb API: ${apiUrl}`);
-
         const response = await fetch(apiUrl);
+
         if (!response.ok) {
-            console.error(`❌ Error al llamar a la API externa: ${response.statusText}`);
-            return res.status(500).json({ message: "Error al llamar a la API externa" });
+            console.error(`❌ Error en API externa: ${response.statusText}`);
+            return res.status(500).json({ message: "Error al consultar OMDb" });
         }
 
         const data = await response.json();
 
-        if (!data.Search || !Array.isArray(data.Search)) {
-            console.log("ℹ️ No se encontraron resultados en la API externa");
-            return res.json(dbMovies); // devolver solo los parciales si no hay más
-        }
+        if (Array.isArray(data.Search)) {
+            for (const movie of data.Search) {
+                try {
+                    const exists = await Movie.findOne({ imdbID: movie.imdbID });
+                    if (!exists) {
+                        const detailsUrl = `https://www.omdbapi.com/?i=${movie.imdbID}&apikey=b69b9800`;
+                        const detailsRes = await fetch(detailsUrl);
+                        const details = await detailsRes.json();
 
-        const moviesFromAPI = data.Search;
-        const savedMovies = [];
+                        if (
+                            details.Type === "movie" &&
+                            details.Poster && details.Poster !== "N/A"
+                        ) {
+                            const newMovie = new Movie({
+                                title: details.Title,
+                                year: parseInt(details.Year),
+                                genre: details.Genre ? details.Genre.split(',').map(g => g.trim()) : [],
+                                director: details.Director || "Desconocido",
+                                actors: details.Actors ? details.Actors.split(',').map(a => a.trim()) : [],
+                                plot: details.Plot || "No disponible",
+                                poster: details.Poster,
+                                imdbID: details.imdbID,
+                                runtime: details.Runtime || "Desconocido",
+                                metascore: isNaN(parseInt(details.Metascore)) ? 0 : parseInt(details.Metascore)
+                            });
 
-        for (const movie of moviesFromAPI) {
-            const movieDetailsUrl = `https://www.omdbapi.com/?i=${movie.imdbID}&apikey=b69b9800`;
-            console.log(`🎬 Fetching movie details: ${movieDetailsUrl}`);
-
-            const movieDetailsResponse = await fetch(movieDetailsUrl);
-            if (!movieDetailsResponse.ok) {
-                console.error(`❌ Error en detalles de la película: ${movieDetailsResponse.statusText}`);
-                continue;
-            }
-
-            const movieDetails = await movieDetailsResponse.json();
-
-            if (
-                movieDetails.Type !== "movie" || 
-                !movieDetails.Poster || 
-                movieDetails.Poster === "N/A" || 
-                movieDetails.Poster.trim() === ""
-            ){
-                console.log(`⏭️ Ignorando tipo no 'movie' o sin póster: ${movieDetails.Title}`);
-                continue;
-            }
-
-            try {
-                const existingMovie = await Movie.findOne({ imdbID: movieDetails.imdbID });
-                if (!existingMovie) {
-                    const newMovie = new Movie({
-                        title: movieDetails.Title,
-                        year: parseInt(movieDetails.Year),
-                        genre: movieDetails.Genre ? movieDetails.Genre.split(',').map(g => g.trim()) : [],
-                        director: movieDetails.Director || "Desconocido",
-                        actors: movieDetails.Actors ? movieDetails.Actors.split(',').map(a => a.trim()) : [],
-                        plot: movieDetails.Plot || "No disponible",
-                        poster: movieDetails.Poster,
-                        imdbID: movieDetails.imdbID,
-                        runtime: movieDetails.Runtime || "Desconocido",
-                        metascore: isNaN(parseInt(movieDetails.Metascore)) ? 0 : parseInt(movieDetails.Metascore)
-                    });
-                    await newMovie.save();
-                    savedMovies.push(newMovie);
-                    console.log(`✅ Película guardada: ${newMovie.title}`);
-                } else {
-                    console.log(`↪️ Película ya existente: ${existingMovie.title}`);
+                            await newMovie.save();
+                            console.log(`✅ Guardada nueva película: ${newMovie.title}`);
+                        }
+                    }
+                } catch (err) {
+                    console.error("❌ Error al guardar película externa:", err.message);
                 }
-            } catch (err) {
-                console.error("❌ Error al guardar la película:", err.message);
             }
-        }
 
-        if (savedMovies.length > 0) {
-            console.log("📥 Nuevas películas guardadas. Recargando desde MongoDB...");
+            // Recalcular resultados después de guardar nuevas
             const updatedMovies = await Movie.find();
-            dbMovies = updatedMovies.filter(movie =>
-                normalizeString(movie.title).toLowerCase().includes(normalizedQuery)
-            ).sort((a, b) => b.metascore - a.metascore);
+            dbMovies = updatedMovies
+                .map(movie => ({
+                    ...movie.toObject(),
+                    similarityScore: titleSimilarity(normalizeString(movie.title), normalizedQuery)
+                }))
+                .filter(movie => movie.similarityScore > 0)
+                .sort((a, b) => b.similarityScore - a.similarityScore);
         }
 
         res.json(dbMovies);
 
     } catch (err) {
-        console.error("🔥 Error inesperado al obtener películas:", err);
+        console.error("🔥 Error inesperado:", err);
         res.status(500).json({ message: "Error del servidor", error: err.message });
     }
 };

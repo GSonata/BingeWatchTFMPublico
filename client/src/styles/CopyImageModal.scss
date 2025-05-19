@@ -1,0 +1,45 @@
+.copy-image-modal {
+  background-color: var(--card-background-soft);
+  padding: var(--padding-medium);
+  border-radius: var(--border-radius-xl);
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: auto;
+  position: relative;
+  color: var(--text-color);
+  box-shadow: var(--box-shadow-soft);
+  font-family: var(--font-family);
+  transition: var(--transition);
+
+  h3 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--gap-medium);
+    text-align: center;
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 70vh;
+    display: block;
+    margin: 0 auto;
+    border-radius: var(--border-radius);
+    border: var(--border-subtle);
+    box-shadow: var(--box-shadow-soft);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: var(--gap-small);
+    right: var(--gap-small);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--gray-medium-light);
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--white);
+    }
+  }
+}

@@ -1,3 +1,4 @@
+// src/component/MovieDetailComponent.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import FooterComponent from "./Subcomponentes/FooterComponent";
 import BannerComponent from "./Subcomponentes/BannerComponent";
 import AddCopyModal from './Subcomponentes/Modales/AddCopyModal';
 import ConfirmDeleteModal from './Subcomponentes/Modales/ConfirmDeleteModal';
+import CopyImageModal from "./Subcomponentes/Modales/CopyImageModal";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -35,6 +37,14 @@ function MovieDetailComponent() {
   const [editingCopy, setEditingCopy] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [copyToDeleteId, setCopyToDeleteId] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const handleViewImage = (base64) => {
+    setSelectedImage(base64);
+    setShowImageModal(true);
+  };
+
   const baseUrl = process.env.REACT_APP_API_URL;
 
   const fetchMovieDetails = async () => {
@@ -112,12 +122,18 @@ function MovieDetailComponent() {
   };
 
   const handleConfirmCopy = async (formValues) => {
+    const payload = {
+      soporte: formValues.soporte,
+      estado: formValues.estado,
+      foto: formValues.foto ?? "",
+      tags: formValues.tags ?? []
+    };
+
     if (copyModalMode === 'add') {
       try {
         const res = await axios.post(`${baseUrl}/user/coleccion`, {
-          imdbID: movie.imdbID,
-          soporte: formValues.soporte,
-          estado: formValues.estado
+          ...payload,
+          imdbID: movie.imdbID
         }, { withCredentials: true });
 
         Toast.fire({ icon: 'success', title: 'Copia añadida correctamente' });
@@ -134,18 +150,20 @@ function MovieDetailComponent() {
             });
           });
         }
+
       } catch (err) {
         Toast.fire({ icon: 'error', title: 'No se pudo añadir la copia' });
       }
+
     } else if (copyModalMode === 'edit') {
       try {
-        await axios.put(`${baseUrl}/user/coleccion/${editingCopy.idCopia}`, {
-          soporte: formValues.soporte,
-          estado: formValues.estado
-        }, { withCredentials: true });
+        await axios.put(`${baseUrl}/user/coleccion/${editingCopy.idCopia}`, payload, {
+          withCredentials: true
+        });
 
         Toast.fire({ icon: 'success', title: 'Copia actualizada correctamente' });
         fetchColeccion();
+
       } catch (err) {
         Toast.fire({ icon: 'error', title: 'No se pudo actualizar la copia' });
       }
@@ -210,12 +228,26 @@ function MovieDetailComponent() {
 
         <h3 className="section-title">Tus copias: </h3>
 
+        <button
+          style={{ display: "none" }}
+          data-testid="open-add-modal"
+          onClick={openAddCopyModal}
+        >
+          Añadir copia (test)
+        </button>
+
         <AddCopyModal
           isOpen={isCopyModalOpen}
           onClose={() => setIsCopyModalOpen(false)}
           onConfirm={handleConfirmCopy}
           mode={copyModalMode}
           copyData={editingCopy}
+        />
+
+        <CopyImageModal
+          isOpen={showImageModal}
+          onClose={() => setShowImageModal(false)}
+          imageSrc={selectedImage}
         />
 
         <ConfirmDeleteModal
@@ -228,6 +260,7 @@ function MovieDetailComponent() {
           copias={coleccion}
           onDeleteCopy={handleDeleteClick}
           onEditCopy={handleEditCopy}
+          onViewImage={handleViewImage}
           setIsAddModalOpen={openAddCopyModal}
         />
       </div>

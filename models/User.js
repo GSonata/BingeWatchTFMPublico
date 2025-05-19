@@ -5,7 +5,9 @@ const movieCopySchema = new mongoose.Schema({
     imdbID: { type: String, required: true },
     estado: { type: String, enum: ["Excelente", "Bueno", "Normal", "Malo"], required: true },
     soporte: { type: String, enum: ["Digital", "BluRay", "VHS", "DVD"], required: true },
-    fechaAñadida: { type: Date, default: Date.now }
+    fechaAñadida: { type: Date, default: Date.now },
+    foto: { type: String, default: "" }, 
+    tags: { type: [String], default: [] }
 });
 
 const watchedMovieSchema = new mongoose.Schema({

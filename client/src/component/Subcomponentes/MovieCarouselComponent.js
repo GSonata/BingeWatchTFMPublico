@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectCoverflow } from 'swiper/modules';
+import { Link } from 'react-router-dom';
 
 // Swiper styles
 import 'swiper/css';
@@ -90,12 +91,14 @@ function MovieCarouselComponent() {
         >
           {movies.map((movie, index) => (
             <SwiperSlide key={index} style={{ width: '300px' }}>
-              <div className="slide">
-                <img src={movie.poster} alt={movie.title} />
-                <div className="bg-info">
-                  <p>{movie.title}</p>
+              <Link to={`/movies/${movie.imdbID}`} className="slide-link">
+                <div className="slide">
+                  <img src={movie.poster} alt={movie.title} />
+                  <div className="bg-info">
+                    <p>{movie.title}</p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </SwiperSlide>
           ))}
         </Swiper>
