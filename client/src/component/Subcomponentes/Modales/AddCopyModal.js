@@ -70,7 +70,21 @@ const AddCopyModal = ({ isOpen, onClose, onConfirm, mode, copyData = {} }) => {
         <label>Imagen de la copia (opcional):</label>
         <input type="file" accept="image/*" onChange={handleImageChange} disabled={isSubmitting} />
 
+        {foto && (
+          <div className="modal-preview-wrapper">
+            <img src={foto} alt="Vista previa" className="modal-preview-image" />
+            <button
+              className="modal-delete-image-btn"
+              onClick={() => setFoto("")}
+              disabled={isSubmitting}
+            >
+              Borrar imagen
+            </button>
+          </div>
+        )}
+
         <label>Tags personalizados (máx. 5):</label>
+
         <Tags
           settings={{ maxTags: 5 }}
           value={tags}
