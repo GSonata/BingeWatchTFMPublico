@@ -1,7 +1,8 @@
 import React from 'react';
 import "../styles/CopiesTable.scss";
 
-function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy, onViewImage, setIsAddModalOpen }) {
+
+function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy, onViewImage, onDeleteImage, setIsAddModalOpen }) {
     return (
         <div className="copies-table-wrapper">
             <table className="copies-table">
@@ -18,25 +19,33 @@ function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy, onViewIm
                 <tbody>
                     {copias.length > 0 ? (
                         copias.map((copia, index) => {
-                            console.log(`🎯 Tags de la copia ${copia.idCopia || index}:`, copia.tags);
+                            const hasImage = typeof copia.foto === "string" && copia.foto.startsWith("data:image");
 
                             return (
                                 <tr key={index}>
                                     <td>{copia.fechaAñadida ? new Date(copia.fechaAñadida).toLocaleDateString() : 'Fecha no disponible'}</td>
                                     <td>{copia.soporte}</td>
                                     <td>{copia.estado}</td>
-                                    <td>
-                                        {typeof copia.foto === "string" && copia.foto.startsWith("data:image") ? (
+                                    <td className="image-cell">
+                                        {hasImage ? (
+                                            <>
+                                                <img
+                                                    src="/images/iconos/imagen.svg"
+                                                    width="30px"
+                                                    height="30px"
+                                                    className="clickable-image"
+                                                    onClick={() => onViewImage(copia.foto)}
+                                                    alt="Ver imagen"
+                                                />
+
+                                            </>
+                                        ) : (
                                             <img
-                                                src='/images/iconos/imagen.svg'
+                                                src="/images/iconos/no-imagen.svg"
                                                 width="30px"
                                                 height="30px"
-                                                className="clickable-image"
-                                                onClick={() => onViewImage(copia.foto)}
-                                                alt="Ver imagen"
+                                                alt="Sin imagen"
                                             />
-                                        ) : (
-                                            <img src='/images/iconos/no-imagen.svg' width="30px" height="30px" alt="Sin imagen" />
                                         )}
                                     </td>
                                     <td>
@@ -63,7 +72,10 @@ function UserCopiesTable({ copias, onAddCopy, onDeleteCopy, onEditCopy, onViewIm
                     <tr>
                         <td colSpan="6" className="add-row">
                             <div className="add-btn-wrapper">
-                                <button className="add-btn" onClick={() => setIsAddModalOpen(true)}><img src='https://www.svgrepo.com/show/535579/plus.svg' width="20px" height="20px" alt="Eliminar" style={{ marginRight: '8px' }}/>Añadir una copia</button>
+                                <button className="add-btn" onClick={() => setIsAddModalOpen(true)}>
+                                    <img src='https://www.svgrepo.com/show/535579/plus.svg' width="20px" height="20px" alt="Añadir" style={{ marginRight: '8px' }} />
+                                    Añadir una copia
+                                </button>
                             </div>
                         </td>
                     </tr>

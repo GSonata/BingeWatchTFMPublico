@@ -121,6 +121,26 @@ function MovieDetailComponent() {
     setIsCopyModalOpen(true);
   };
 
+const onDeleteImage = async (idCopia) => {
+  const copia = coleccion.find(c => c.idCopia === idCopia);
+  if (!copia) return;
+
+  try {
+    await axios.put(`${baseUrl}/user/coleccion/${idCopia}`, {
+      soporte: copia.soporte,
+      estado: copia.estado,
+      foto: "", 
+      tags: copia.tags
+    }, { withCredentials: true });
+
+    Swal.fire("Imagen eliminada", "La imagen se ha borrado correctamente", "success");
+    fetchColeccion();
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo borrar la imagen", "error");
+  }
+};
+
   const handleConfirmCopy = async (formValues) => {
     const payload = {
       soporte: formValues.soporte,
@@ -262,6 +282,7 @@ function MovieDetailComponent() {
           onEditCopy={handleEditCopy}
           onViewImage={handleViewImage}
           setIsAddModalOpen={openAddCopyModal}
+          onDeleteImage={onDeleteImage}
         />
       </div>
       <FooterComponent />

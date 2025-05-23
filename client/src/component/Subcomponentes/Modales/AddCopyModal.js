@@ -70,12 +70,7 @@ const AddCopyModal = ({ isOpen, onClose, onConfirm, mode, copyData = {} }) => {
         <label>Imagen de la copia (opcional):</label>
         <input type="file" accept="image/*" onChange={handleImageChange} disabled={isSubmitting} />
 
-        {foto && (
-          <img src={foto} alt="Vista previa" className="preview-image" />
-        )}
-
         <label>Tags personalizados (máx. 5):</label>
-
         <Tags
           settings={{ maxTags: 5 }}
           value={tags}
