@@ -69,7 +69,7 @@ Hola 👋, soy **Jose Prados**, desarrollador fullstack con experiencia en MERN,
 
 ```bash
 # Clona este repositorio
-git clone https://github.com/tuusuario/bingewatch.git
+git clone https://github.com/GSonata/BingeWatchTFMPublico.git
 
 # Backend
 cd server
